@@ -9,28 +9,30 @@ export default function PageLayout({ title, subtitle, number, children }) {
       <div style={{
         width: '100%',
         height: '100vh',
-        background: '#071a10',
+        background: '#0C120C',
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
       }}>
         <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@1,300;1,400;1,500&display=swap');
+
           .gl-bg-img {
             position: absolute;
             inset: 0;
             background-image: url(/images/bg-landscape.jpg);
             background-size: cover;
             background-position: center right;
-            opacity: 0.07;
-            filter: saturate(0.6) brightness(0.75);
+            opacity: 0.06;
+            filter: saturate(0.4) brightness(0.6) sepia(0.3);
             z-index: 0;
             pointer-events: none;
           }
           .gl-bg-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, rgba(7,26,16,0.97) 0%, rgba(7,26,16,0.88) 100%);
+            background: linear-gradient(135deg, rgba(12,18,12,0.97) 0%, rgba(12,18,12,0.88) 100%);
             z-index: 1;
             pointer-events: none;
           }
@@ -40,16 +42,17 @@ export default function PageLayout({ title, subtitle, number, children }) {
             right: -5%;
             width: 50%;
             height: 60%;
-            background: radial-gradient(ellipse at center, rgba(131,153,88,0.06) 0%, transparent 70%);
+            background: radial-gradient(ellipse at center, rgba(212,168,83,0.07) 0%, transparent 70%);
             z-index: 1;
             pointer-events: none;
+            animation: candleflicker 7s ease-in-out infinite;
           }
 
           .gl-header {
             position: relative;
             z-index: 10;
             padding: 28px 6vw 22px 6vw;
-            border-bottom: 1px solid rgba(131,153,88,0.15);
+            border-bottom: 1px solid rgba(100,118,86,0.14);
             flex-shrink: 0;
           }
           .gl-header::before {
@@ -57,17 +60,17 @@ export default function PageLayout({ title, subtitle, number, children }) {
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(131,153,88,0.5) 30%, rgba(211,150,140,0.4) 70%, transparent);
+            background: linear-gradient(90deg, transparent, rgba(100,118,86,0.5) 30%, rgba(212,168,83,0.35) 65%, transparent);
           }
 
           .gl-eyebrow {
-            font-family: 'Lato', sans-serif;
-            font-weight: 300;
-            font-size: 10px;
+            font-family: 'Cinzel', serif;
+            font-weight: 400;
+            font-size: 9px;
             letter-spacing: 5px;
             text-transform: uppercase;
-            color: rgba(131,153,88,0.6);
-            margin-bottom: 8px;
+            color: rgba(100,118,86,0.55);
+            margin-bottom: 10px;
           }
 
           .gl-title {
@@ -76,38 +79,45 @@ export default function PageLayout({ title, subtitle, number, children }) {
             font-weight: 400;
             font-size: clamp(40px, 6vw, 72px);
             letter-spacing: 1px;
-            color: #F7F4D5;
+            color: #F3ECCD;
             line-height: 0.9;
           }
 
           .gl-subtitle {
             font-family: 'Lato', sans-serif;
             font-weight: 300;
-            font-size: 12px;
-            letter-spacing: 3px;
-            color: rgba(211,150,140,0.55);
-            margin-top: 6px;
+            font-size: 11px;
+            letter-spacing: 4px;
+            color: rgba(212,168,83,0.5);
+            margin-top: 8px;
             text-transform: uppercase;
           }
 
           .gl-back {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            font-family: 'Lato', sans-serif;
-            font-weight: 300;
-            font-size: 10px;
+            gap: 10px;
+            font-family: 'Cinzel', serif;
+            font-weight: 400;
+            font-size: 9px;
             letter-spacing: 4px;
             text-transform: uppercase;
-            color: rgba(247,244,213,0.2);
+            color: rgba(243,236,205,0.18);
             cursor: pointer;
             border: none;
             background: none;
             padding: 0;
-            margin-top: 16px;
-            transition: color 0.2s ease;
+            margin-top: 18px;
+            transition: color 0.25s ease;
           }
-          .gl-back:hover { color: rgba(211,150,140,0.7); }
+          .gl-back::before {
+            content: '◆';
+            font-size: 5px;
+            color: rgba(212,168,83,0.4);
+            transition: color 0.25s ease;
+          }
+          .gl-back:hover { color: rgba(212,168,83,0.75); }
+          .gl-back:hover::before { color: #D4A853; }
 
           .gl-content {
             position: relative;
@@ -128,11 +138,21 @@ export default function PageLayout({ title, subtitle, number, children }) {
             font-family: 'Cormorant Garamond', serif;
             font-style: italic;
             font-weight: 400;
-            font-size: 28px;
-            color: rgba(131,153,88,0.7);
+            font-size: 26px;
+            color: rgba(100,118,86,0.6);
             margin-bottom: 18px;
             margin-top: 36px;
             letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+          }
+          .gl-section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(100,118,86,0.2), transparent);
+            max-width: 200px;
           }
           .gl-section-label:first-child { margin-top: 0; }
         `}</style>
@@ -146,7 +166,7 @@ export default function PageLayout({ title, subtitle, number, children }) {
           <div className="gl-title">{title}</div>
           {subtitle && <div className="gl-subtitle">{subtitle}</div>}
           <button className="gl-back" onClick={() => navigate('/')}>
-            ← back
+            return
           </button>
         </header>
 

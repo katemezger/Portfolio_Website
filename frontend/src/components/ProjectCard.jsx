@@ -3,17 +3,17 @@ export default function ProjectCard({ title, tags = [], description, link, linkL
     <>
       <style>{`
         .gc-card {
-          background: rgba(10, 35, 20, 0.55);
-          border: 1px solid rgba(131,153,88,0.18);
-          border-left: 2px solid rgba(211,150,140,0.45);
+          background: rgba(14, 20, 14, 0.6);
+          border: 1px solid rgba(100,118,86,0.16);
+          border-left: 2px solid rgba(122,98,67,0.5);
           padding: 26px 24px 22px 26px;
           position: relative;
           overflow: hidden;
           transition: border-color 0.28s ease, background 0.28s ease, transform 0.28s ease;
         }
         .gc-card:hover {
-          border-color: rgba(131,153,88,0.38);
-          background: rgba(10, 40, 24, 0.75);
+          border-color: rgba(100,118,86,0.32);
+          background: rgba(18, 26, 18, 0.75);
           transform: translateY(-2px);
         }
         .gc-card::after {
@@ -21,7 +21,7 @@ export default function ProjectCard({ title, tags = [], description, link, linkL
           position: absolute;
           bottom: 0; left: 0; right: 0;
           height: 1px;
-          background: linear-gradient(90deg, rgba(211,150,140,0.25), transparent);
+          background: linear-gradient(90deg, rgba(122,98,67,0.3), transparent);
         }
 
         .gc-title {
@@ -30,7 +30,7 @@ export default function ProjectCard({ title, tags = [], description, link, linkL
           font-weight: 500;
           font-size: 22px;
           letter-spacing: 0.5px;
-          color: #F7F4D5;
+          color: #F3ECCD;
           margin-bottom: 12px;
           line-height: 1.1;
         }
@@ -47,8 +47,8 @@ export default function ProjectCard({ title, tags = [], description, link, linkL
           font-size: 9px;
           letter-spacing: 2.5px;
           text-transform: uppercase;
-          color: rgba(131,153,88,0.8);
-          border: 1px solid rgba(131,153,88,0.25);
+          color: rgba(100,118,86,0.75);
+          border: 1px solid rgba(100,118,86,0.22);
           padding: 3px 9px;
           border-radius: 1px;
         }
@@ -57,7 +57,7 @@ export default function ProjectCard({ title, tags = [], description, link, linkL
           font-family: 'Lato', sans-serif;
           font-weight: 300;
           font-size: 14px;
-          color: rgba(247,244,213,0.45);
+          color: rgba(243,236,205,0.42);
           line-height: 1.75;
           margin-bottom: 20px;
         }
@@ -68,14 +68,14 @@ export default function ProjectCard({ title, tags = [], description, link, linkL
           font-size: 10px;
           letter-spacing: 3px;
           text-transform: uppercase;
-          color: rgba(211,150,140,0.75);
+          color: rgba(212,168,83,0.7);
           text-decoration: none;
           display: inline-flex;
           align-items: center;
           gap: 7px;
           transition: color 0.2s ease;
         }
-        .gc-link:hover { color: #D3968C; }
+        .gc-link:hover { color: #D4A853; }
         .gc-link::after {
           content: '→';
           font-size: 12px;

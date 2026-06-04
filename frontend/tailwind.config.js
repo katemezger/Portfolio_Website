@@ -6,14 +6,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        p5red: '#E61E25',
-        amber:  '#C4962A',
-        dark:   '#0d0a08',
-        warm:   '#F0EBE3',
+        onyx:          '#0C120C',
+        cornsilk:      '#F3ECCD',
+        'dusty-olive': '#647656',
+        'olive-wood':  '#7A6243',
+        'deep-space':  '#0B3954',
+        candlelight:   '#D4A853',
       },
       fontFamily: {
-        p5:   ['Anton', 'sans-serif'],
-        body: ['Rajdhani', 'sans-serif'],
+        display: ['Cinzel', 'serif'],
+        serif:   ['Cormorant Garamond', 'serif'],
+        body:    ['Lato', 'sans-serif'],
       },
     },
   },

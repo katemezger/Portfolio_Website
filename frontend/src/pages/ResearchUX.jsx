@@ -1,48 +1,41 @@
-import PageLayout from '../components/PageLayout.jsx'
-import ProjectCard from '../components/ProjectCard.jsx'
+import DisciplineLayout from '../components/DisciplineLayout.jsx'
 
-const research = [
-  {
-    title: "Project Title",
-    tags: ["User Interviews", "Affinity Mapping", "Insights"],
-    description: "Describe your UX research project — methodology, participants, key findings.",
-    link: "#",
-  },
-  {
-    title: "Project Title",
-    tags: ["Usability Testing", "Think-Aloud", "Report"],
-    description: "Describe a second research project here.",
-    link: "#",
-  },
+// ── ADD PROJECTS ─────────────────────────────────────────────────────────────
+const RESEARCH = [
+  { title: 'Add Your Project', desc: 'Describe your UX research project — methodology, participants, key findings.', tags: ['User Interviews', 'Affinity Mapping', 'Insights'], img: '', link: '#' },
+  { title: 'Add Your Project', desc: 'Describe a second research project here.', tags: ['Usability Testing', 'Think-Aloud'], img: '', link: '#' },
 ]
 
-const uxui = [
-  {
-    title: "Project Title",
-    tags: ["Figma", "Design System", "Prototyping"],
-    description: "Describe your UI design project — the problem space, your design decisions, the outcome.",
-    link: "#",
-  },
-  {
-    title: "Project Title",
-    tags: ["Wireframing", "Visual Design", "Accessibility"],
-    description: "Describe a second UX/UI project here.",
-    link: "#",
-  },
+const UXUI = [
+  { title: 'Add Your Project', desc: 'Describe your UI design project — the problem space, your decisions, the outcome.', tags: ['Figma', 'Design System', 'Prototyping'], img: '', link: '#' },
+  { title: 'Add Your Project', desc: 'Describe a second UX/UI project here.', tags: ['Wireframing', 'Visual Design', 'Accessibility'], img: '', link: '#' },
 ]
+
+function Card({ title, desc, tags, img, link }) {
+  return (
+    <div className="dl-card" onClick={() => link !== '#' && (window.location.href = link)}>
+      <div className="dl-card-img">
+        {img ? <img src={img} alt={title} /> : <span className="dl-img-label">Add Image</span>}
+      </div>
+      <div className="dl-card-title">{title}</div>
+      <div className="dl-card-desc">{desc}</div>
+      <div className="dl-tags">{tags.map(t => <span key={t} className="dl-tag">{t}</span>)}</div>
+    </div>
+  )
+}
 
 export default function ResearchUX() {
   return (
-    <PageLayout title="Research & UX/UI" subtitle="UX Research · Interface Design" number="02">
-      <div className="gl-section-label">UX Research</div>
-      <div className="eden-grid" style={{ marginBottom: 48 }}>
-        {research.map((p, i) => <ProjectCard key={i} {...p} />)}
+    <DisciplineLayout num="02" h1="UX/UI &" h2="Research" eyebrow="Discipline">
+      <div className="dl-section-label">UX Research</div>
+      <div className="dl-grid">
+        {RESEARCH.map((p, i) => <Card key={i} {...p} />)}
       </div>
 
-      <div className="gl-section-label">UX / UI Design</div>
-      <div className="eden-grid">
-        {uxui.map((p, i) => <ProjectCard key={i} {...p} />)}
+      <div className="dl-section-label">UX / UI Design</div>
+      <div className="dl-grid">
+        {UXUI.map((p, i) => <Card key={i} {...p} />)}
       </div>
-    </PageLayout>
+    </DisciplineLayout>
   )
 }
