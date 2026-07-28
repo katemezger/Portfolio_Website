@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Stoke:wght@300;400&family=La+Belle+Aurore&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Caveat:wght@400;700&display=swap');
+/* Fonts are loaded via a <link> in index.html, not @import here, so the
+   browser can discover and start the download while parsing the HTML. */
 
 *, *::before, *::after {
   margin: 0;
@@ -33,5 +34,17 @@ body {
 @keyframes marqueeScroll {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
+}
+
+/* Respect the OS-level "reduce motion" setting: kill the blob morphing,
+   floating symbols, marquee scroll, loading-screen vine draw, and cursor
+   hover bounce, all of which are otherwise-infinite CSS animations. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 

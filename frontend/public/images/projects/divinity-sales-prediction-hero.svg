@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 350">
+  <rect width="800" height="350" fill="#0A3020"/>
+
+  <!-- baseline -->
+  <line x1="60" y1="300" x2="580" y2="300" stroke="rgba(240,237,230,0.18)" stroke-width="1.5"/>
+
+  <!-- historical comparable-title bars -->
+  <rect x="80"  y="250" width="56" height="50"  fill="#186878"/>
+  <rect x="160" y="220" width="56" height="80"  fill="#186878"/>
+  <rect x="240" y="235" width="56" height="65"  fill="#186878"/>
+  <rect x="320" y="190" width="56" height="110" fill="#D4B880"/>
+  <text x="348" y="180" text-anchor="middle" font-family="Georgia, serif" font-size="13" fill="rgba(240,237,230,0.55)">BG3</text>
+  <rect x="400" y="210" width="56" height="90"  fill="#186878"/>
+
+  <!-- predicted Divinity bar: dashed outline only, forecast not fact -->
+  <rect x="480" y="170" width="56" height="130" fill="none" stroke="#8DC4C0" stroke-width="2.5" stroke-dasharray="6 5"/>
+  <text x="508" y="160" text-anchor="middle" font-family="Georgia, serif" font-size="13" fill="#8DC4C0">?</text>
+
+  <!-- forecast trend arrow -->
+  <path d="M 140,215 C 250,150 380,120 500,95" fill="none" stroke="#D4B880" stroke-width="2" stroke-dasharray="4 6" opacity="0.75"/>
+  <path d="M 490,105 L 500,95 L 493,108 Z" fill="#D4B880" opacity="0.75"/>
+
+  <!-- d20 die, representing the RPG domain -->
+  <polygon points="680,45 720,67.5 720,112.5 680,135 640,112.5 640,67.5"
+    fill="#8DC4C0" opacity="0.9"/>
+  <polygon points="680,45 720,67.5 680,90 640,67.5" fill="#0A3020" opacity="0.12"/>
+  <polygon points="680,135 720,112.5 680,90 640,112.5" fill="#0A3020" opacity="0.12"/>
+  <text x="680" y="97" text-anchor="middle" font-family="Georgia, serif" font-weight="bold" font-size="26" fill="#0A3020">20</text>
+
+  <!-- whimsy sparkle -->
+  <path d="M 596,40 C 596.5,44 598.5,46 602.5,46.5 C 598.5,47 596.5,49 596,53 C 595.5,49 593.5,47 589.5,46.5 C 593.5,46 595.5,44 596,40 Z" fill="#D4B880" opacity="0.6"/>
+</svg>

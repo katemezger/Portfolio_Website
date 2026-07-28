@@ -8,19 +8,31 @@ export default function StarCursor() {
     if (!el) return
 
     const onMove = (e) => {
+      el.style.opacity = '1'
       el.style.transform = `translate(${e.clientX - 9}px, ${e.clientY - 9}px)`
     }
 
     const onOver = (e) => {
-      const hit = e.target.closest('a, button, [role="button"], [tabindex="0"]')
+      const hit = e.target instanceof Element
+        ? e.target.closest('a, button, [role="button"], [tabindex="0"]')
+        : null
       el.classList.toggle('hovered', !!hit)
+    }
+
+    // Hide the custom cursor when the pointer leaves the browser window
+    // (relatedTarget is null on that transition), so it can't get stuck
+    // frozen at its last position. It reappears on the next mousemove.
+    const onLeave = (e) => {
+      if (!e.relatedTarget) el.style.opacity = '0'
     }
 
     window.addEventListener('mousemove', onMove, { passive: true })
     window.addEventListener('mouseover', onOver, { passive: true })
+    document.addEventListener('mouseout', onLeave, { passive: true })
     return () => {
       window.removeEventListener('mousemove', onMove)
       window.removeEventListener('mouseover', onOver)
+      document.removeEventListener('mouseout', onLeave)
     }
   }, [])
 
@@ -35,6 +47,8 @@ export default function StarCursor() {
           width: 18px; height: 18px;
           pointer-events: none;
           z-index: 99999;
+          opacity: 0;
+          transition: opacity 0.2s ease;
           will-change: transform;
         }
 

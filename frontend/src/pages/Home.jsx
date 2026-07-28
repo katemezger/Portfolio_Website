@@ -26,6 +26,18 @@ const DISCIPLINES = [
 const PROJECTS = [
   {
     id: 1,
+    slug:  'tracksense-ai',
+    title: 'TrackSense AI',
+    cat:   'Design & Development',
+    type:  'design',
+    catBg: '#0A3020',
+    year:  '2026',
+    desc:  'Frontend design and development for an AI-powered Formula 1 race analytics platform, presented at AIM S26.',
+    tags:  ['React', 'UI Design', 'Formula 1', 'Data Visualisation'],
+    img:   '/images/projects/tracksense-ai-hero.png',
+  },
+  {
+    id: 2,
     slug:  'eden-portfolio',
     title: 'Eden Portfolio',
     cat:   'Design & Development',
@@ -34,34 +46,86 @@ const PROJECTS = [
     year:  '2026',
     desc:  'A whimsical personal portfolio with a garden aesthetic, animated blob shapes, and a custom botanical design system built in React.',
     tags:  ['React', 'Framer Motion', 'SVG', 'CSS'],
-    img:   '',
-  },
-  {
-    id: 2,
-    slug:  'second-project',
-    title: 'Add Your Project',
-    cat:   'UX/UI',
-    type:  'ux',
-    catBg: '#186878',
-    year:  '2025',
-    desc:  'Short project description — add yours here.',
-    tags:  ['Research'],
-    img:   '',
+    img:   '/images/projects/eden-portfolio-hero.png',
   },
   {
     id: 3,
-    slug:  'third-project',
-    title: 'Add Your Project',
+    slug:  'cgs-usability-study',
+    title: 'MonkeyType vs KeyHero',
+    cat:   'UX Quantitative Research',
+    type:  'ux',
+    catBg: '#186878',
+    year:  '2025',
+    desc:  'A comparative usability study measuring WPM, accuracy, and test duration across two popular typing platforms.',
+    tags:  ['Usability Testing', 'HCI', 'Think-Aloud', 'Data Analysis'],
+    img:   '/images/projects/cgs-usability-study-hero.png',
+  },
+  {
+    id: 4,
+    slug:  'time2invest',
+    title: 'Time2Invest',
+    cat:   'Design & Development',
+    type:  'design',
+    catBg: '#0A3020',
+    year:  '2026',
+    desc:  'A 24-hour WEHack hackathon build: a financial literacy tool that teaches investing through real historical headlines and market data.',
+    tags:  ['Hackathon', 'WEHack', 'FinTech', 'React'],
+    img:   '/images/projects/time2invest-hero.png',
+  },
+  {
+    id: 5,
+    slug:  'netflix-prediction',
+    title: 'Predicting Netflix Success',
     cat:   'AI/ML & Data Science',
     type:  'ai',
     catBg: '#6B8040',
-    year:  '2025',
-    desc:  'Short project description — add yours here.',
-    tags:  ['Python', 'D3.js'],
-    img:   '',
+    year:  '2026',
+    desc:  'A data science study testing whether genre, country, and release metadata can predict Netflix title success.',
+    tags:  ['R', 'Machine Learning', 'tidyverse', 'Data Analysis'],
+    img:   '/images/projects/netflix-prediction-hero.png',
+  },
+  {
+    id: 6,
+    slug:  'divinity-sales-prediction',
+    title: 'Divinity: First-Year Sales Prediction',
+    cat:   'AI/ML & Data Science',
+    type:  'ai',
+    catBg: '#6B8040',
+    year:  'Dec 2025',
+    desc:  'A machine learning model forecasting first-year sales for an upcoming Larian Studios game using comparable RPG performance data.',
+    tags:  ['Python', 'Machine Learning', 'Jupyter', 'Data Cleaning'],
+    img:   '/images/projects/divinity-sales-prediction-hero.svg',
+  },
+  {
+    id: 7,
+    slug:  'steam-customer-segmentation',
+    title: 'Customer Segmentation for Steam',
+    cat:   'AI/ML & Data Science',
+    type:  'ai',
+    catBg: '#6B8040',
+    year:  'Jun 2026',
+    desc:  'Unsupervised clustering on 200K Steam interaction logs to surface four distinct player personas, deployed as a FastAPI microservice.',
+    tags:  ['Python', 'Scikit-learn', 'K-Means', 'PCA', 'FastAPI'],
+    img:   '/images/projects/steam-customer-segmentation-hero.svg',
+  },
+  {
+    id: 8,
+    slug:  'ais-portal',
+    title: 'AIS Membership Portal',
+    cat:   'Design & Development',
+    type:  'design',
+    catBg: '#0A3020',
+    year:  'Jun 2026',
+    desc:  'Designed and integrated the mobile pages for AI Society\'s membership platform, aligned to current AIS brand guidelines under a one-month deadline.',
+    tags:  ['Figma', 'Next.js', 'TypeScript', 'Mobile Design'],
+    img:   '/images/ais_logo_black.png',
   },
 ]
 
+// `img` left unset on purpose: the portal is meant for small, legible crops
+// (a code snippet, a page screenshot) rather than the full project hero
+// banners, which look muddy squeezed into a small circle. Drop a path here
+// once you have those crops.
 const PORTAL_ITEMS = [
   { id: 1, cat: 'Design & Development', bg: '#0A3020' },
   { id: 2, cat: 'UX/UI',               bg: '#186878' },
@@ -94,7 +158,7 @@ const SOCIALS = [
   // ── LINKS: replace the href values below with your real URLs ────────────────
   // LinkedIn → 'https://www.linkedin.com/in/kate-mezger-437397263/YOUR-HANDLE'
   // Resume   → drop your PDF into frontend/public/ and set href to '/resume.pdf'
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/kate-mezger-437397263/kate-mezger', icon: <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/kate-mezger-437397263/', icon: <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> },
   { label: 'GitHub',   href: 'https://github.com/katemezger',  icon: <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg> },
   { label: 'Email',    href: 'mailto:kate.mezger22@gmail.com', icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="18" height="18"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg> },
   { label: 'Resume',   href: '/resume.pdf',                    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="18" height="18"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> },
@@ -103,26 +167,58 @@ const SOCIALS = [
 
 
 /* ─── organic blob photo frame ────────────────── */
+// Raw path in a 400x510 reference box (used for the visible border overlay,
+// which scales correctly via the SVG viewBox).
 const ABOUT_BLOB = "M 42,24 Q 120,8 200,18 Q 280,28 362,12 Q 390,16 388,50 Q 396,150 388,252 Q 380,354 390,438 Q 392,470 358,482 Q 276,498 196,486 Q 116,474 44,492 Q 16,486 12,454 Q 4,354 14,252 Q 24,150 8,50 Q 8,18 42,24 Z"
+
+// Same shape normalised to 0-1 (objectBoundingBox units) for the actual clip.
+// CSS `clip-path: path()` uses raw pixel coordinates with no viewBox concept,
+// so applying ABOUT_BLOB directly only lines up when the box happens to
+// render at exactly 400x510px; at any other size (i.e. almost always, since
+// the frame is `width: 100%` in a responsive grid) the clip region overshoots
+// or undershoots the box, which is what made the photo appear cropped into
+// the top-left corner. An SVG clipPath with clipPathUnits="objectBoundingBox"
+// scales with the element instead.
+const ABOUT_BLOB_NORM = "M 0.105,0.0471 Q 0.3,0.0157 0.5,0.0353 Q 0.7,0.0549 0.905,0.0235 Q 0.975,0.0314 0.97,0.098 Q 0.99,0.2941 0.97,0.4941 Q 0.95,0.6941 0.975,0.8588 Q 0.98,0.9216 0.895,0.9451 Q 0.69,0.9765 0.49,0.9529 Q 0.29,0.9294 0.11,0.9647 Q 0.04,0.9529 0.03,0.8902 Q 0.01,0.6941 0.035,0.4941 Q 0.06,0.2941 0.02,0.098 Q 0.02,0.0353 0.105,0.0471 Z"
 
 // ── PHOTO: save your headshot to  frontend/public/images/kate.jpg  ──────────
 
 function BlobPhotoFrame() {
   return (
     <div style={{ position: 'relative', width: '100%', aspectRatio: '4/5' }}>
-      {/* Photo clipped to the blob shape via CSS clip-path */}
-      <img
-        src="/images/kate.jpg"
-        alt="Kate Mezger"
+      <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
+        <defs>
+          <clipPath id="about-blob-clip" clipPathUnits="objectBoundingBox">
+            <path d={ABOUT_BLOB_NORM} />
+          </clipPath>
+        </defs>
+      </svg>
+      {/* Photo clipped to the blob shape via an SVG clipPath (scales with the box).
+          Rendered as a background image (zoomed via background-size) rather
+          than an <img> with a CSS transform: a transform scales the whole
+          rendered element — including its already-clipped shape — past its
+          own box, which overflowed the frame and made the border underneath
+          look "inset" relative to the oversized photo. Background-size zooms
+          the image content without changing the element's box, so the clip
+          and the border stay in sync. */}
+      <div
+        role="img" aria-label="Kate Mezger"
         style={{
           position: 'absolute', inset: 0,
-          width: '100%', height: '100%',
-          objectFit: 'cover', objectPosition: 'center top',
-          clipPath: `path('${ABOUT_BLOB}')`,
+          backgroundImage: 'url(/images/kate.jpg)',
+          backgroundSize: '145%',
+          backgroundPosition: 'center 20%',
+          backgroundRepeat: 'no-repeat',
+          clipPath: 'url(#about-blob-clip)',
         }}
       />
-      {/* Blob border overlay */}
-      <svg viewBox="0 0 400 510" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+      {/* Blob border overlay. preserveAspectRatio="none" so it stretches to
+          match the box exactly, same as the clip-path (objectBoundingBox
+          scales non-uniformly too) — otherwise the default "meet" behavior
+          shrinks the outline to fit inside the box, leaving it visibly
+          inset instead of tracing the photo's actual edge. */}
+      <svg viewBox="0 0 400 510" preserveAspectRatio="none"
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
         xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d={ABOUT_BLOB} fill="none" stroke="rgba(240,237,230,0.22)" strokeWidth="2" />
       </svg>
@@ -159,8 +255,19 @@ function Portal({ items, onExplore, size = 300 }) {
               opacity: i === idx ? 1 : 0, transition: 'opacity 1.1s ease',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6,
             }}>
-              <div style={{ fontFamily: "'Stoke', serif", fontSize: 10, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(240,237,230,0.35)' }}>{item.cat}</div>
-              <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 11, letterSpacing: 4, textTransform: 'uppercase', color: 'rgba(240,237,230,0.2)' }}>Add Image</div>
+              {item.img
+                ? <img src={item.img} alt={item.cat} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                : (
+                  <div style={{
+                    fontFamily: "'Berkshire Swash', serif", fontWeight: 400,
+                    fontSize: item.cat.length > 10 ? size * 0.115 : size * 0.22,
+                    lineHeight: 1.15, textAlign: 'center', padding: '0 22px',
+                    color: 'rgba(240,237,230,0.92)', textShadow: '0 2px 14px rgba(0,0,0,0.15)',
+                  }}>
+                    {item.cat}
+                  </div>
+                )
+              }
             </div>
           ))}
           <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: 'radial-gradient(circle, transparent 38%, rgba(0,0,0,0.15) 100%)', pointerEvents: 'none' }} />
@@ -214,6 +321,7 @@ function useReveal(threshold = 0.1) {
 /* ─── main ────────────────────────────────────── */
 export default function Home() {
   const navigate = useNavigate()
+  const scrollRef = useRef(null)
   const [ready, setReady]   = useState(false)
   const [filter, setFilter] = useState('ALL')
   const [discRef, discOn]   = useReveal(0.08)
@@ -224,11 +332,13 @@ export default function Home() {
   useEffect(() => { const t = setTimeout(() => setReady(true), 80); return () => clearTimeout(t) }, [])
 
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+  const scrollToTop = () => scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
   const activeFn = FILTERS.find(f => f.label === filter)?.fn || (() => true)
   const displayProjects = PROJECTS.filter(activeFn)
 
   return (
     <motion.div
+      ref={scrollRef}
       initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 0.4 } }}
       exit={{ opacity: 0, transition: { duration: 0.2 } }}
       style={{ height: '100vh', overflowY: 'auto', overflowX: 'hidden', background: '#E5EAD8', position: 'relative' }}
@@ -420,7 +530,7 @@ export default function Home() {
 
       {/* ── NAV ─────────────────────────── */}
       <nav className="nav">
-        <button className="nav-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Eden</button>
+        <button className="nav-logo" onClick={scrollToTop}>Eden</button>
         <div className="nav-links">
           <button className="nav-btn" onClick={() => scrollTo('disc-section')}>works</button>
           <button className="nav-btn" onClick={() => scrollTo('about-section')}>about</button>
@@ -580,16 +690,18 @@ export default function Home() {
               <span className="ab">design.</span>
             </div>
             <p className="about-bio">
-              I'm Kate — a multi-disciplinary designer and developer. I've always been drawn to the edges where disciplines overlap: the moment a game mechanic becomes a UX pattern, or a data visualisation becomes a piece of art.<br /><br />
-              Add your bio here. Tell your story, what drives you, and why you work across design, research, and data.
+              I'm Kate, a multi-disciplinary designer and developer. I've always been drawn to the edges where disciplines overlap: the moment a game's design breaks down into a piece of UX beauty, or a data visualisation becomes a piece of art.<br /><br />
+              I'm going into my third year at UT Dallas as a Cognitive Science major, concentrating in AI/Computation and HCI, and I'm working through a data science certification alongside it.<br /><br />
+              On campus I'm part of AIS, where I started as a mentee in Spring 2026 and joined the tech team as of Summer 2026, and I also work with the Nebula Labs product team. Outside of school I work part time as a Game Master at Red Door Escape Room, something I've been doing for just over a year now.
             </p>
             <div className="about-links">
               <a href="mailto:kate.mezger22@gmail.com" className="about-lnk">Email</a>
               <a href="https://www.linkedin.com/in/kate-mezger-437397263/" target="_blank" rel="noopener noreferrer" className="about-lnk">LinkedIn</a>
               <a href="https://github.com/katemezger" target="_blank" rel="noopener noreferrer" className="about-lnk">GitHub</a>
+              <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="about-lnk">Resume</a>
             </div>
           </div>
-          <div className={`rv${aboutOn ? ' on' : ''} d2`}>
+          <div className={`rv${aboutOn ? ' on' : ''} d2`} style={{ width: '100%', maxWidth: 400, marginInline: 'auto', marginTop: 60, position: 'relative', left: 12 }}>
             <BlobPhotoFrame />
           </div>
         </div>
@@ -625,7 +737,8 @@ export default function Home() {
           <a href="mailto:kate.mezger22@gmail.com" className="footer-lnk">Email</a>
           <a href="https://www.linkedin.com/in/kate-mezger-437397263/" target="_blank" rel="noopener noreferrer" className="footer-lnk">LinkedIn</a>
           <a href="https://github.com/katemezger" target="_blank" rel="noopener noreferrer" className="footer-lnk">GitHub</a>
-          <button className="footer-lnk" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>↑ Top</button>
+          <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="footer-lnk">Resume</a>
+          <button className="footer-lnk" onClick={scrollToTop}>↑ Top</button>
         </div>
         <span className="footer-copy">© 2026 Kate Mezger</span>
       </footer>
