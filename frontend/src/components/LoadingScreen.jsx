@@ -37,7 +37,7 @@ export default function LoadingScreen() {
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 100000,
-      background: '#E5EAD8',
+      background: '#F4F5F0',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       opacity: out ? 0 : 1,
       transition: 'opacity 0.5s ease',

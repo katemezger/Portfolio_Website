@@ -1,4 +1,5 @@
 import DisciplineLayout from '../components/DisciplineLayout.jsx'
+import useDocumentTitle from '../components/useDocumentTitle.js'
 
 const PROJECTS = [
   {
@@ -45,8 +46,11 @@ function Card({ title, desc, tags, img, link }) {
 }
 
 export default function DesignDev() {
+  useDocumentTitle('Design & Development: Kate Mezger')
   return (
-    <DisciplineLayout num="01" h1="Design &" h2="Development" eyebrow="Discipline">
+    <DisciplineLayout num="01" h1="Design &" h2="Development" eyebrow="Discipline"
+      intro="I care about the gap between a good idea and an interface that actually holds up under real use. That means starting in Figma, but not stopping there: I build the systems myself in React, from a from-scratch design system for this site to a mobile-responsive membership portal built inside an existing organization's guidelines. Design that never gets built is just a sketch.">
+
       <div className="dl-grid">
         {PROJECTS.map((p, i) => <Card key={i} {...p} />)}
       </div>

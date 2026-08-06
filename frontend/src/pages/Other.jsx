@@ -1,6 +1,8 @@
 import DisciplineLayout from '../components/DisciplineLayout.jsx'
+import useDocumentTitle from '../components/useDocumentTitle.js'
 
 export default function Other() {
+  useDocumentTitle('Other: Kate Mezger')
   return (
     <DisciplineLayout num="04" h1="Other" h2="Experiments" eyebrow="Discipline">
       <div className="dl-section-label">Side Projects & Experiments</div>

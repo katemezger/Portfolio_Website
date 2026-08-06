@@ -1,15 +1,17 @@
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ScatteredSymbolsFixed } from '../components/ScatteredSymbols.jsx'
+import useDocumentTitle from '../components/useDocumentTitle.js'
 
 export default function NotFound() {
+  useDocumentTitle('Page Not Found: Kate Mezger')
   const navigate = useNavigate()
 
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 0.4 } }}
       exit={{ opacity: 0, transition: { duration: 0.2 } }}
-      style={{ background: '#E5EAD8', height: '100vh', overflow: 'hidden', position: 'relative',
+      style={{ background: '#F4F5F0', height: '100vh', overflow: 'hidden', position: 'relative',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}
     >
       <ScatteredSymbolsFixed />
@@ -19,7 +21,7 @@ export default function NotFound() {
         ✦ Lost in the Garden ✦
       </span>
 
-      <h1 style={{ fontFamily: "'Berkshire Swash', serif", fontWeight: 400,
+      <h1 style={{ fontFamily: "'Fraunces', serif", fontWeight: 400,
         fontSize: 'clamp(70px, 14vw, 160px)', color: '#0A3020', lineHeight: 1, margin: '4px 0' }}>
         404
       </h1>

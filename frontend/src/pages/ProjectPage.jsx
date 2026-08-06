@@ -1,6 +1,9 @@
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ScatteredSymbolsFixed } from '../components/ScatteredSymbols.jsx'
+import MotifIcon from '../components/MotifIcon.jsx'
+import RevealText from '../components/RevealText.jsx'
+import useDocumentTitle from '../components/useDocumentTitle.js'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HOW TO ADD A PROJECT
@@ -61,7 +64,7 @@ The aesthetic direction is "whimsical botanical garden": cream backgrounds, fore
       },
       {
         heading: 'Design System',
-        body: `I settled on five font families with strict rules: Berkshire Swash for decorative display headings, Stoke for named content titles, Cormorant Garamond for all body text, La Belle Aurore for the Eden brand mark, and Caveat for handwriting touches. The colour palette has nine named tokens. Having these constraints up-front meant every component decision was fast.`,
+        body: `I settled on five font families with strict rules: Fraunces for confident display headings, Stoke for named content titles, Cormorant Garamond for all body text, La Belle Aurore for the Eden brand mark, and Caveat reserved for one handwritten touch in the hero. The colour palette has five named tokens: a cool off-white background, near-black, forest green, teal, and a soft teal accent. Having these constraints up-front meant every component decision was fast.`,
       },
       {
         heading: 'Building the Whimsy Layer',
@@ -79,7 +82,7 @@ The aesthetic direction is "whimsical botanical garden": cream backgrounds, fore
 
     outcomes: [
       { stat: '5', label: 'Custom font families with strict usage rules' },
-      { stat: '9', label: 'Named colour tokens from the Figma palette' },
+      { stat: '5', label: 'Named colour tokens from the Figma palette' },
       { stat: '100%', label: 'Custom-built, no templates or UI libraries' },
     ],
 
@@ -139,7 +142,7 @@ The aesthetic direction is "whimsical botanical garden": cream backgrounds, fore
     subtitle: 'Frontend design for an F1 race analytics platform.',
     year:     '2026',
     category: 'Design & Development',
-    accent:   '#6B8040',
+    accent:   '#0A3020',
     motif:    'flag',
     tags:     ['React', 'Frontend Development', 'UI Design', 'Formula 1', 'Data Visualisation', 'AI'],
     role:     'Frontend Designer & Developer',
@@ -191,7 +194,7 @@ The aesthetic direction is "whimsical botanical garden": cream backgrounds, fore
     subtitle: 'A hackathon tool that teaches investing through history.',
     year:     '2026',
     category: 'Design & Development',
-    accent:   '#D4B880',
+    accent:   '#071A12',
     motif:    'chart',
     tags:     ['Hackathon', 'WEHack', 'React', 'FinTech', 'UI Design', 'Financial Literacy'],
     role:     'Designer & Developer',
@@ -281,7 +284,7 @@ The aesthetic direction is "whimsical botanical garden": cream backgrounds, fore
     subtitle: 'Forecasting a Larian Studios launch before it ships.',
     year:     'Dec 2025',
     category: 'AI/ML & Data Science',
-    accent:   '#B89898',
+    accent:   '#186878',
     motif:    'dice',
     tags:     ['Python', 'Machine Learning', 'Jupyter', 'Data Cleaning', 'Feature Engineering'],
     role:     'Data Analyst & ML Developer',
@@ -321,7 +324,7 @@ The aesthetic direction is "whimsical botanical garden": cream backgrounds, fore
     subtitle: 'Finding four player personas hiding in 200K play sessions.',
     year:     'Jun 2026',
     category: 'AI/ML & Data Science',
-    accent:   '#CCCAE8',
+    accent:   '#8DC4C0',
     motif:    'controller',
     tags:     ['Python', 'Scikit-learn', 'K-Means', 'PCA', 'FastAPI', 'Unsupervised Learning'],
     role:     'Data Scientist',
@@ -365,7 +368,7 @@ The aesthetic direction is "whimsical botanical garden": cream backgrounds, fore
     subtitle: 'Designing the mobile experience for a student org\'s membership platform.',
     year:     'Jun 2026',
     category: 'Design & Development',
-    accent:   '#A8AEA8',
+    accent:   '#071A12',
     motif:    'chip',
     tags:     ['Figma', 'Next.js', 'TypeScript', 'Mobile Design', 'Brand Guidelines'],
     role:     'UI Designer',
@@ -453,46 +456,19 @@ const PROJECT_ORDER = [
   'netflix-prediction', 'divinity-sales-prediction', 'steam-customer-segmentation', 'ais-portal',
 ]
 
-// Small per-project motif icon, shown next to the category/year eyebrow so
-// each case study reads as its own thing rather than a copy-pasted template.
-function MotifIcon({ name, color, size = 20 }) {
-  const p = { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: color, strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' }
-  switch (name) {
-    case 'leaf':
-      return <svg {...p}><path d="M4 20C4 10 10 4 20 4C20 14 14 20 4 20Z" /><path d="M4 20C8 14 12 10 18 6" /></svg>
-    case 'keyboard':
-      return <svg {...p}><rect x="2.5" y="6" width="19" height="12" rx="2" /><line x1="6" y1="10" x2="6" y2="10" /><line x1="9" y1="10" x2="9" y2="10" /><line x1="12" y1="10" x2="12" y2="10" /><line x1="15" y1="10" x2="15" y2="10" /><line x1="18" y1="10" x2="18" y2="10" /><line x1="6" y1="14.5" x2="15" y2="14.5" /></svg>
-    case 'flag':
-      return <svg {...p}><line x1="5" y1="3" x2="5" y2="21" /><path d="M5 4H18L14 8L18 12H5" fill={color} fillOpacity="0.22" /></svg>
-    case 'chart':
-      return <svg {...p}><path d="M3 20H21" /><rect x="5" y="14" width="3" height="6" /><rect x="10.5" y="10" width="3" height="10" /><rect x="16" y="5" width="3" height="15" /><path d="M5 9L10 5L15 8L20 3" /></svg>
-    case 'film':
-      return <svg {...p}><rect x="3" y="4" width="18" height="16" rx="1.5" /><line x1="3" y1="8" x2="21" y2="8" /><line x1="3" y1="16" x2="21" y2="16" /><line x1="7" y1="4" x2="7" y2="8" /><line x1="7" y1="16" x2="7" y2="20" /><line x1="17" y1="4" x2="17" y2="8" /><line x1="17" y1="16" x2="17" y2="20" /></svg>
-    case 'dice':
-      return <svg {...p}><rect x="4" y="4" width="16" height="16" rx="3" /><circle cx="8" cy="8" r="1.1" fill={color} stroke="none" /><circle cx="16" cy="8" r="1.1" fill={color} stroke="none" /><circle cx="12" cy="12" r="1.1" fill={color} stroke="none" /><circle cx="8" cy="16" r="1.1" fill={color} stroke="none" /><circle cx="16" cy="16" r="1.1" fill={color} stroke="none" /></svg>
-    case 'controller':
-      return <svg {...p}><path d="M6 8.5H10M8 6.5V10.5" /><circle cx="16.5" cy="8" r="0.9" fill={color} stroke="none" /><circle cx="18.5" cy="10" r="0.9" fill={color} stroke="none" /><path d="M5 8C3 8 2 10 2 13C2 16 3.5 18 5.5 17C7 16.3 7.5 15 9 15H15C16.5 15 17 16.3 18.5 17C20.5 18 22 16 22 13C22 10 21 8 19 8C17 8 16.5 9 12 9C7.5 9 7 8 5 8Z" /></svg>
-    case 'chip':
-      return <svg {...p}><rect x="7" y="7" width="10" height="10" rx="1" /><line x1="9" y1="2" x2="9" y2="7" /><line x1="12" y1="2" x2="12" y2="7" /><line x1="15" y1="2" x2="15" y2="7" /><line x1="9" y1="17" x2="9" y2="22" /><line x1="12" y1="17" x2="12" y2="22" /><line x1="15" y1="17" x2="15" y2="22" /><line x1="2" y1="9" x2="7" y2="9" /><line x1="2" y1="12" x2="7" y2="12" /><line x1="2" y1="15" x2="7" y2="15" /><line x1="17" y1="9" x2="22" y2="9" /><line x1="17" y1="12" x2="22" y2="12" /><line x1="17" y1="15" x2="22" y2="15" /></svg>
-    default:
-      return null
-  }
-}
-
 // Cycled per gallery image so the collage has real variety in shape, size,
-// and placement rather than a uniform grid of same-size photos.
+// Just varies the crop aspect ratio so the gallery isn't a monotonous grid
+// of identical rectangles — no tilt/tape here, project pages stay clean.
 const GALLERY_VARIANTS = [
-  { width: '94%',  rotate: -4,  aspect: '4 / 3',   justify: 'start',  tape: 'rgba(24,104,120,0.55)',  tapeRotate: -9, tapeLeft: '22%' },
-  { width: '64%',  rotate: 5,   aspect: '1 / 1',   justify: 'end',    tape: 'rgba(212,184,128,0.6)',  tapeRotate: 7,  tapeLeft: '68%' },
-  { width: '100%', rotate: -2,  aspect: '16 / 10', justify: 'center', tape: 'rgba(107,128,64,0.55)',  tapeRotate: -6, tapeLeft: '50%' },
-  { width: '74%',  rotate: 4.5, aspect: '3 / 4',   justify: 'start',  tape: 'rgba(204,202,232,0.65)', tapeRotate: 8,  tapeLeft: '32%' },
-  { width: '86%',  rotate: -3,  aspect: '5 / 4',   justify: 'end',    tape: 'rgba(184,152,152,0.6)',  tapeRotate: -7, tapeLeft: '62%' },
-  { width: '58%',  rotate: 3.5, aspect: '1 / 1',   justify: 'center', tape: 'rgba(24,104,120,0.5)',   tapeRotate: 5,  tapeLeft: '45%' },
+  { aspect: '4 / 3' },
+  { aspect: '1 / 1' },
+  { aspect: '16 / 10' },
+  { aspect: '3 / 4' },
 ]
 
 /* ─── colour tokens ──────────────────────────────────────────────────────── */
 const C = {
-  bg:      '#E5EAD8',
+  bg:      '#F4F5F0',
   dark:    '#0A3020',
   teal:    '#186878',
   text:    '#071A12',
@@ -500,10 +476,51 @@ const C = {
   subtle:  'rgba(7,26,18,0.12)',
 }
 
+function useInView(threshold = 0.4) {
+  const ref = useRef(null)
+  const [inView, setInView] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setInView(true); obs.disconnect() } }, { threshold })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+  return [ref, inView]
+}
+
+// Animates the numeric portion of a stat (e.g. "200K", "1st Place", "<15ms")
+// from 0 up to its real value once scrolled into view. Stats with no digits
+// at all (e.g. "WPM", "R", "Quant UX") just render statically.
+function AnimatedStat({ stat, active }) {
+  const match = stat.match(/\d+/)
+  const [display, setDisplay] = useState(match ? '0' : stat)
+
+  useEffect(() => {
+    if (!active || !match) return
+    const target = parseInt(match[0], 10)
+    const duration = 900
+    const start = performance.now()
+    let raf
+    const tick = (now) => {
+      const progress = Math.min((now - start) / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setDisplay(String(Math.round(target * eased)))
+      if (progress < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [active])
+
+  if (!match) return stat
+  return `${stat.slice(0, match.index)}${display}${stat.slice(match.index + match[0].length)}`
+}
+
 export default function ProjectPage() {
   const { slug }  = useParams()
   const navigate  = useNavigate()
   const project   = PROJECTS[slug]
+  useDocumentTitle(project ? `${project.title}: Kate Mezger` : 'Project Not Found: Kate Mezger')
 
   if (!project) {
     return (
@@ -522,15 +539,24 @@ export default function ProjectPage() {
   }
 
   const accent = project.accent || C.teal
+  const [outcomesRef, outcomesInView] = useInView()
+  const [scrollProgress, setScrollProgress] = useState(0)
   const nextIdx = PROJECT_ORDER.indexOf(slug)
   const nextSlug = nextIdx === -1 ? null : PROJECT_ORDER[(nextIdx + 1) % PROJECT_ORDER.length]
   const nextProject = nextSlug ? PROJECTS[nextSlug] : null
+
+  const onScroll = (e) => {
+    const el = e.currentTarget
+    const max = el.scrollHeight - el.clientHeight
+    setScrollProgress(max > 0 ? (el.scrollTop / max) * 100 : 0)
+  }
 
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 0.4 } }}
       exit={{ opacity: 0, transition: { duration: 0.2 } }}
       style={{ background: C.bg, height: '100vh', overflowY: 'auto', overflowX: 'hidden', position: 'relative' }}
+      onScroll={onScroll}
     >
       <style>{`
         .pp-body  { max-width: 1160px; margin: 0 auto; padding: 0 6vw 100px; }
@@ -547,7 +573,7 @@ export default function ProjectPage() {
         .pp-meta-item label { display: block; font-family: 'Cormorant Garamond', serif; font-size: 10px;
           letter-spacing: 3px; text-transform: uppercase; color: ${C.muted}; margin-bottom: 5px; }
         .pp-meta-item span  { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: ${C.text}; }
-        .pp-h2  { font-family: 'Berkshire Swash', serif; font-size: clamp(22px,3vw,32px);
+        .pp-h2  { font-family: 'Fraunces', serif; font-size: clamp(22px,3vw,32px);
           color: ${C.dark}; margin: 52px 0 14px; }
         .pp-body-text { font-family: 'Cormorant Garamond', serif; font-size: 18px; line-height: 1.8;
           color: ${C.text}; }
@@ -561,21 +587,17 @@ export default function ProjectPage() {
         .pp-outcome .stat  { font-family: 'Stoke', serif; font-size: 28px; color: ${C.teal}; }
         .pp-outcome .label { font-family: 'Cormorant Garamond', serif; font-size: 13px;
           color: ${C.muted}; letter-spacing: 1px; margin-top: 4px; }
-        .pp-gallery { display: grid; grid-template-columns: 1fr; gap: 32px; padding: 8px 10px; }
+        .pp-gallery { display: grid; grid-template-columns: 1fr; gap: 20px; }
         .pp-gallery-item { margin: 0; }
         .pp-gallery-photo {
-          position: relative; background: #fff; padding: 10px 10px 14px;
-          box-shadow: 0 10px 22px rgba(7,26,18,0.22), 0 2px 6px rgba(7,26,18,0.1);
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          position: relative; background: #fff; border-radius: 4px; overflow: hidden;
+          box-shadow: 0 4px 14px rgba(7,26,18,0.12);
+          transition: box-shadow 0.25s ease;
         }
-        .pp-gallery-item:hover .pp-gallery-photo { transform: rotate(0deg) scale(1.08) !important; box-shadow: 0 16px 32px rgba(7,26,18,0.3); z-index: 5; }
-        .pp-gallery-photo img { width: 100%; height: 100%; border-radius: 1px; display: block; object-fit: cover; }
-        .pp-gallery-tape {
-          position: absolute; top: -11px; width: 54px; height: 20px;
-          box-shadow: 0 2px 5px rgba(7,26,18,0.18);
-        }
-        .pp-gallery-item figcaption { font-family: 'Caveat', cursive; font-weight: 700; font-size: 17px;
-          color: rgba(7,26,18,0.65); margin-top: 10px; text-align: center; line-height: 1.25; }
+        .pp-gallery-item:hover .pp-gallery-photo { box-shadow: 0 8px 22px rgba(7,26,18,0.2); }
+        .pp-gallery-photo img { width: 100%; height: 100%; display: block; object-fit: cover; }
+        .pp-gallery-item figcaption { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14px;
+          color: rgba(7,26,18,0.5); margin-top: 8px; text-align: center; line-height: 1.35; }
         .pp-gallery-empty { font-family: 'Cormorant Garamond', serif; font-size: 16px;
           color: rgba(7,26,18,0.3); letter-spacing: 0.5px; margin: 8px 0 28px; }
         .pp-tags  { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
@@ -596,8 +618,13 @@ export default function ProjectPage() {
         .pp-back:hover { color: ${C.teal}; }
       `}</style>
 
+      {/* Scroll progress bar */}
+      <div style={{
+        position: 'fixed', top: 0, left: 0, height: 3, width: `${scrollProgress}%`,
+        background: accent, zIndex: 200, transition: 'width 0.1s linear',
+      }} />
+
       {/* Back button */}
-      <ScatteredSymbolsFixed />
       <button className="pp-back" onClick={() => navigate('/')}>← Back to work</button>
 
       {/* Hero image */}
@@ -619,9 +646,8 @@ export default function ProjectPage() {
                   const caption = typeof img === 'string' ? null : img.caption
                   const v = GALLERY_VARIANTS[i % GALLERY_VARIANTS.length]
                   return (
-                    <figure key={i} className="pp-gallery-item" style={{ width: v.width, justifySelf: v.justify }}>
-                      <div className="pp-gallery-photo" style={{ transform: `rotate(${v.rotate}deg)` }}>
-                        <span className="pp-gallery-tape" style={{ background: v.tape, left: v.tapeLeft, transform: `translateX(-50%) rotate(${v.tapeRotate}deg)` }} />
+                    <figure key={i} className="pp-gallery-item">
+                      <div className="pp-gallery-photo">
                         <img src={src} alt={caption || `${project.title} gallery image ${i + 1}`}
                           style={{ aspectRatio: v.aspect }} />
                       </div>
@@ -643,9 +669,9 @@ export default function ProjectPage() {
             {project.motif && <MotifIcon name={project.motif} color={accent} size={17} />}
             {project.category} · {project.year}
           </div>
-          <h1 style={{ fontFamily: "'Berkshire Swash', serif", fontSize: 'clamp(36px,6vw,68px)',
+          <h1 style={{ fontFamily: "'Fraunces', serif", fontSize: 'clamp(36px,6vw,68px)',
             color: C.dark, lineHeight: 1, margin: 0 }}>
-            {project.title}
+            <RevealText text={project.title} />
           </h1>
           <p style={{ fontFamily: "'Stoke', serif", fontSize: 'clamp(16px,2vw,22px)',
             color: C.teal, marginTop: 12, marginBottom: 0 }}>
@@ -711,10 +737,12 @@ export default function ProjectPage() {
           {project.outcomes?.length > 0 && (
             <>
               <h2 className="pp-h2">Outcomes</h2>
-              <div className="pp-outcomes">
+              <div className="pp-outcomes" ref={outcomesRef}>
                 {project.outcomes.map((o, i) => (
                   <div key={i} className="pp-outcome">
-                    <div className="stat" style={{ color: accent }}>{o.stat}</div>
+                    <div className="stat" style={{ color: accent }}>
+                      <AnimatedStat stat={o.stat} active={outcomesInView} />
+                    </div>
                     <div className="label">{o.label}</div>
                   </div>
                 ))}

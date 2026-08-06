@@ -1,4 +1,5 @@
 import DisciplineLayout from '../components/DisciplineLayout.jsx'
+import useDocumentTitle from '../components/useDocumentTitle.js'
 
 const PROJECTS = [
   {
@@ -45,8 +46,10 @@ function Card({ title, desc, tags, img, link }) {
 }
 
 export default function AnalyticsScience() {
+  useDocumentTitle('AI/ML & Data Science: Kate Mezger')
   return (
-    <DisciplineLayout num="03" h1="AI/ML &" h2="Data Science" eyebrow="Discipline">
+    <DisciplineLayout num="03" h1="AI/ML &" h2="Data Science" eyebrow="Discipline"
+      intro="Building models is only half the work. My Cognitive Science concentration in AI/Computation pushes me toward the other half: whether a prediction can actually be trusted, and by whom. On the Divinity sales model, that meant prioritising interpretability so the estimate could be sanity-checked against domain knowledge instead of taken on faith. On TrackSense, it meant designing the frontend so an AI model's predictions were readable and presentable, not just technically correct. That's the throughline: building AI systems people can actually understand and act on.">
       <div className="dl-grid">
         {PROJECTS.map((p, i) => <Card key={i} {...p} />)}
       </div>

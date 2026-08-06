@@ -2,13 +2,17 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import ScatteredSymbols from '../components/ScatteredSymbols.jsx'
+import MotifIcon, { PROJECT_MOTIFS } from '../components/MotifIcon.jsx'
+import TiltCard from '../components/TiltCard.jsx'
+import RevealText from '../components/RevealText.jsx'
+import useDocumentTitle from '../components/useDocumentTitle.js'
 
 /* ─── data ────────────────────────────────────── */
 const DISCIPLINES = [
   { num: '01', title: 'Design & Development', page: 'design-dev',        desc: 'Human-centred design. From wireframes to polished interfaces, bridging user needs and creative vision.',  tools: ['Figma', 'React', 'CSS', 'Prototyping'],               bg: '#0A3020', fg: '#F0EDE6', iconDim: 'rgba(240,237,230,0.35)' },
   { num: '02', title: 'UX/UI',                page: 'research-ux',       desc: 'Deep user insight through qualitative and quantitative methods. Research that actually drives decisions.',   tools: ['User Research', 'Usability Testing', 'Wireframing'],  bg: '#186878', fg: '#F0EDE6', iconDim: 'rgba(240,237,230,0.35)' },
-  { num: '03', title: 'AI/ML & Data Science', page: 'analytics-science', desc: 'Turning raw numbers into stories. ML models, visualisations, and asking the right questions.',             tools: ['Python', 'Pandas', 'Sklearn', 'D3.js'],               bg: '#6B8040', fg: '#F0EDE6', iconDim: 'rgba(240,237,230,0.35)' },
-  { num: '04', title: 'Other',                page: 'other',             desc: 'Experiments, side projects, and things that defy easy categories. Creative explorations.',                  tools: ['Various', 'Experimental'],                            bg: '#CCCAE8', fg: '#071A12', iconDim: 'rgba(7,26,18,0.25)'   },
+  { num: '03', title: 'AI/ML & Data Science', page: 'analytics-science', desc: 'Turning raw numbers into stories. ML models, visualisations, and asking the right questions.',             tools: ['Python', 'Pandas', 'Sklearn', 'D3.js'],               bg: '#8DC4C0', fg: '#071A12', iconDim: 'rgba(7,26,18,0.3)'   },
+  { num: '04', title: 'Other',                page: 'other',             desc: 'Experiments, side projects, and things that defy easy categories. Creative explorations.',                  tools: ['Various', 'Experimental'],                            bg: '#071A12', fg: '#F0EDE6', iconDim: 'rgba(240,237,230,0.35)' },
 ]
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -78,7 +82,7 @@ const PROJECTS = [
     title: 'Predicting Netflix Success',
     cat:   'AI/ML & Data Science',
     type:  'ai',
-    catBg: '#6B8040',
+    catBg: '#071A12',
     year:  '2026',
     desc:  'A data science study testing whether genre, country, and release metadata can predict Netflix title success.',
     tags:  ['R', 'Machine Learning', 'tidyverse', 'Data Analysis'],
@@ -90,7 +94,7 @@ const PROJECTS = [
     title: 'Divinity: First-Year Sales Prediction',
     cat:   'AI/ML & Data Science',
     type:  'ai',
-    catBg: '#6B8040',
+    catBg: '#071A12',
     year:  'Dec 2025',
     desc:  'A machine learning model forecasting first-year sales for an upcoming Larian Studios game using comparable RPG performance data.',
     tags:  ['Python', 'Machine Learning', 'Jupyter', 'Data Cleaning'],
@@ -102,7 +106,7 @@ const PROJECTS = [
     title: 'Customer Segmentation for Steam',
     cat:   'AI/ML & Data Science',
     type:  'ai',
-    catBg: '#6B8040',
+    catBg: '#071A12',
     year:  'Jun 2026',
     desc:  'Unsupervised clustering on 200K Steam interaction logs to surface four distinct player personas, deployed as a FastAPI microservice.',
     tags:  ['Python', 'Scikit-learn', 'K-Means', 'PCA', 'FastAPI'],
@@ -129,10 +133,10 @@ const PROJECTS = [
 const PORTAL_ITEMS = [
   { id: 1, cat: 'Design & Development', bg: '#0A3020' },
   { id: 2, cat: 'UX/UI',               bg: '#186878' },
-  { id: 3, cat: 'AI/ML & Data Science',bg: '#6B8040' },
-  { id: 4, cat: 'Other',               bg: '#B89898' },
-  { id: 5, cat: 'Design & Development',bg: '#8DC4C0' },
-  { id: 6, cat: 'AI/ML & Data Science',bg: '#CCCAE8' },
+  { id: 3, cat: 'AI/ML & Data Science',bg: '#071A12' },
+  { id: 4, cat: 'Other',               bg: '#0A3020' },
+  { id: 5, cat: 'Design & Development',bg: '#186878' },
+  { id: 6, cat: 'AI/ML & Data Science',bg: '#071A12' },
 ]
 
 const MARQUEE = ['DESIGN', 'UX/UI', 'AI & ML', 'DATA SCIENCE', 'DEVELOPMENT', 'RESEARCH', 'BRAND']
@@ -140,11 +144,11 @@ const MARQUEE = ['DESIGN', 'UX/UI', 'AI & ML', 'DATA SCIENCE', 'DEVELOPMENT', 'R
 const TOOLS = {
   DESIGN:        ['Figma', 'After Effects', 'Illustrator', 'Photoshop', 'Framer'],
   DEVELOPMENT:   ['React', 'TypeScript', 'Next.js', 'Tailwind CSS', 'Node.js'],
-  'DATA & ML':   ['Python', 'Pandas', 'Scikit-learn', 'D3.js', 'Jupyter'],
-  'UX RESEARCH': ['User Research', 'Usability Testing', 'Journey Mapping', 'Prototyping', 'Figma'],
+  'DATA & ML':   ['Python', 'Pandas', 'Scikit-learn', 'D3.js', 'Jupyter', 'Model Interpretability'],
+  'UX RESEARCH': ['User Research', 'Usability Testing', 'Journey Mapping', 'Prototyping', 'Human-AI Interaction'],
 }
 
-const SKILLS = ['Systems Thinking', 'Prototyping', 'Visual Storytelling', 'Data Modelling', 'Game Mechanics', 'Typography', 'Motion Design', 'User Research']
+const SKILLS = ['Systems Thinking', 'Prototyping', 'Visual Storytelling', 'Data Modelling', 'Human-AI Interaction', 'Game Mechanics', 'Typography', 'Motion Design', 'User Research']
 
 const FILTERS = [
   { label: 'ALL',           fn: () => true },
@@ -259,7 +263,7 @@ function Portal({ items, onExplore, size = 300 }) {
                 ? <img src={item.img} alt={item.cat} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                 : (
                   <div style={{
-                    fontFamily: "'Berkshire Swash', serif", fontWeight: 400,
+                    fontFamily: "'Fraunces', serif", fontWeight: 400,
                     fontSize: item.cat.length > 10 ? size * 0.115 : size * 0.22,
                     lineHeight: 1.15, textAlign: 'center', padding: '0 22px',
                     color: 'rgba(240,237,230,0.92)', textShadow: '0 2px 14px rgba(0,0,0,0.15)',
@@ -320,6 +324,7 @@ function useReveal(threshold = 0.1) {
 
 /* ─── main ────────────────────────────────────── */
 export default function Home() {
+  useDocumentTitle('Kate Mezger: Eden Portfolio')
   const navigate = useNavigate()
   const scrollRef = useRef(null)
   const [ready, setReady]   = useState(false)
@@ -341,7 +346,7 @@ export default function Home() {
       ref={scrollRef}
       initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 0.4 } }}
       exit={{ opacity: 0, transition: { duration: 0.2 } }}
-      style={{ height: '100vh', overflowY: 'auto', overflowX: 'hidden', background: '#E5EAD8', position: 'relative' }}
+      style={{ height: '100vh', overflowY: 'auto', overflowX: 'hidden', background: '#F4F5F0', position: 'relative' }}
     >
       <style>{`
         /* ── Nav ────────────────────────── */
@@ -361,12 +366,28 @@ export default function Home() {
 
         /* ── Hero ──────────────────────── */
         .hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 56px 6vw 68px; position: relative; }
-        .hero-name { font-family: 'Berkshire Swash', serif; font-weight: 400; color: #0A3020; font-size: clamp(50px, 9.5vw, 132px); letter-spacing: 0; line-height: 1; white-space: nowrap; opacity: 0; transform: translateY(20px); transition: opacity 0.65s ease 0.1s, transform 0.65s cubic-bezier(0.16,1,0.3,1) 0.1s; }
+        .hero-name { font-family: 'Fraunces', serif; font-weight: 400; color: #0A3020; font-size: clamp(50px, 9.5vw, 132px); letter-spacing: 0; line-height: 1; white-space: nowrap; opacity: 0; transform: translateY(20px); transition: opacity 0.65s ease 0.1s, transform 0.65s cubic-bezier(0.16,1,0.3,1) 0.1s; }
         .hero-name.rdy { opacity: 1; transform: none; }
         .hero-rule { width: 86%; max-width: 820px; height: 2px; background: #186878; margin: 18px auto 20px; opacity: 0; transition: opacity 0.5s ease 0.38s; }
         .hero-rule.rdy { opacity: 1; }
         .hero-sparkle { font-family: 'Stoke', serif; font-weight: 400; font-size: clamp(14px, 1.6vw, 19px); letter-spacing: 3px; text-transform: uppercase; color: #186878; display: flex; align-items: center; justify-content: center; gap: 14px; opacity: 0; transition: opacity 0.5s ease 0.5s; }
         .hero-sparkle.rdy { opacity: 1; }
+        .hero-availability {
+          display: inline-flex; align-items: center; gap: 8px; margin-top: 18px;
+          font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 12px;
+          letter-spacing: 1.5px; text-transform: uppercase; color: #186878;
+          border: 1px solid rgba(24,104,120,0.3); border-radius: 20px; padding: 7px 16px;
+          opacity: 0; transition: opacity 0.5s ease 0.6s;
+        }
+        .hero-availability.rdy { opacity: 1; }
+        .hero-availability-dot {
+          width: 7px; height: 7px; border-radius: 50%; background: #8DC4C0; flex-shrink: 0;
+          animation: pulseDot 2s ease-in-out infinite;
+        }
+        @keyframes pulseDot {
+          0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(141,196,192,0.5); }
+          50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(141,196,192,0); }
+        }
         .hero-gem { font-size: 16px; color: rgba(24,104,120,0.5); }
         .hero-socials { display: flex; gap: 10px; justify-content: center; margin: 22px 0; opacity: 0; transition: opacity 0.5s ease 0.7s; }
         .hero-socials.rdy { opacity: 1; }
@@ -391,7 +412,7 @@ export default function Home() {
         /* ── Section heading ────────────── */
         .sec-eyebrow { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: rgba(7,26,18,0.38); margin-bottom: 10px; }
         .sec-heading { font-family: 'Cormorant Garamond', serif; line-height: 0.9; letter-spacing: -1px; margin-bottom: 44px; }
-        .sec-heading .h1 { display: block; color: #071A12; font-family: 'Berkshire Swash', serif; font-weight: 400; font-size: clamp(42px, 6vw, 82px); }
+        .sec-heading .h1 { display: block; color: #071A12; font-family: 'Fraunces', serif; font-weight: 400; font-size: clamp(42px, 6vw, 82px); }
         .sec-heading .h2 { display: block; color: #186878; font-family: 'Stoke', serif; font-weight: 400; font-size: clamp(42px, 6vw, 82px); }
 
         /* ── Disciplines ────────────────── */
@@ -436,6 +457,25 @@ export default function Home() {
         @media (max-width: 900px) { .proj-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .proj-grid { grid-template-columns: 1fr; } }
         .proj-empty { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: rgba(7,26,18,0.3); letter-spacing: 2px; padding: 40px 0; text-align: center; grid-column: 1/-1; }
+
+        /* ── Full index — a fast, scannable list of every project ── */
+        .proj-index { margin-top: 56px; border-top: 1px solid rgba(7,26,18,0.1); }
+        .proj-index-label { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 11px;
+          letter-spacing: 3px; text-transform: uppercase; color: rgba(7,26,18,0.36); margin: 26px 0 4px; }
+        .proj-index-row {
+          display: flex; align-items: baseline; gap: 18px; padding: 16px 0;
+          border-bottom: 1px solid rgba(7,26,18,0.1); cursor: pointer;
+        }
+        .proj-index-title { font-family: 'Stoke', serif; font-size: 19px; color: #071A12; transition: color 0.2s; white-space: nowrap; }
+        .proj-index-row:hover .proj-index-title { color: #186878; }
+        .proj-index-meta { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: rgba(7,26,18,0.42); flex: 1; }
+        .proj-index-arrow { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: rgba(7,26,18,0.3);
+          transition: transform 0.2s ease, color 0.2s ease; }
+        .proj-index-row:hover .proj-index-arrow { color: #186878; transform: translateX(4px); }
+        @media (max-width: 620px) {
+          .proj-index-row { flex-wrap: wrap; }
+          .proj-index-meta { flex-basis: 100%; order: 3; }
+        }
         .proj-card { cursor: pointer; }
         .proj-card:hover .proj-title { color: #186878; }
         .proj-img { aspect-ratio: 4/3; background: rgba(7,26,18,0.055); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; border-radius: 4px;
@@ -461,7 +501,7 @@ export default function Home() {
         @media (max-width: 760px) { .about-grid { grid-template-columns: 1fr; } }
         .about-eyebrow { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: rgba(240,237,230,0.35); margin-bottom: 11px; }
         .about-heading { font-family: 'Cormorant Garamond', serif; line-height: 0.95; letter-spacing: -1px; margin-bottom: 22px; }
-        .about-heading .al { display: block; color: #F0EDE6; font-family: 'Berkshire Swash', serif; font-weight: 400; font-size: clamp(34px, 5vw, 60px); }
+        .about-heading .al { display: block; color: #F0EDE6; font-family: 'Fraunces', serif; font-weight: 400; font-size: clamp(34px, 5vw, 60px); }
         .about-heading .ab { display: block; color: #8DC4C0; font-family: 'Stoke', serif; font-weight: 400; font-size: clamp(34px, 5vw, 60px); }
         .about-bio { font-family: 'Cormorant Garamond', serif; font-size: 17px; color: rgba(240,237,230,0.62); line-height: 1.78; margin-bottom: 26px; }
         .about-links { display: flex; gap: 9px; flex-wrap: wrap; }
@@ -547,6 +587,11 @@ export default function Home() {
           <span className="hero-gem">✦</span>
         </div>
 
+        <div className={`hero-availability${ready ? ' rdy' : ''}`}>
+          <span className="hero-availability-dot" />
+          Open to Summer 2027 Internships
+        </div>
+
         <Portal items={PORTAL_ITEMS} onExplore={() => scrollTo('disc-section')} size={280} />
 
         <div className={`hero-socials${ready ? ' rdy' : ''}`}>
@@ -588,8 +633,8 @@ export default function Home() {
       <section className="disc-wrap">
         <p className="sec-eyebrow">What I Do</p>
         <div className="sec-heading">
-          <span className="h1">My</span>
-          <span className="h2">Disciplines</span>
+          <span className="h1"><RevealText text="My" /></span>
+          <span className="h2"><RevealText text="Disciplines" /></span>
         </div>
         <div className="disc-grid" ref={discRef}>
           {DISCIPLINES.map((d, i) => (
@@ -630,8 +675,8 @@ export default function Home() {
       <section className="proj-wrap">
         <p className="sec-eyebrow">Selected Work</p>
         <div className="sec-heading">
-          <span className="h1">The</span>
-          <span className="h2">Projects</span>
+          <span className="h1"><RevealText text="The" /></span>
+          <span className="h2"><RevealText text="Projects" /></span>
         </div>
         <div className="filter-row">
           {FILTERS.map(f => (
@@ -644,25 +689,48 @@ export default function Home() {
           {displayProjects.length === 0
             ? <div className="proj-empty">No projects in this category yet.</div>
             : displayProjects.map((p, i) => (
-              <div key={p.id}
-                className={`proj-card rv${projOn ? ' on' : ''} d${Math.min(i + 1, 4)}`}
-                onClick={() => navigate(`/project/${p.slug}`)}
-                role="button" tabIndex={0}
-                onKeyDown={e => e.key === 'Enter' && navigate(`/project/${p.slug}`)}>
-                <div className="proj-img">
-                  {p.img
-                    ? <img src={p.img} alt={p.title} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-                    : <span className="proj-img-label">Add Image</span>
-                  }
-                  <span className="proj-cat" style={{ background: p.catBg }}>{p.cat}</span>
-                  <span className="proj-yr">{p.year}</span>
-                </div>
-                <div className="proj-title">{p.title}</div>
-                <div className="proj-desc">{p.desc}</div>
-                <div className="proj-tags">{p.tags.map(t => <span key={t} className="proj-tag">{t}</span>)}</div>
+              <div key={p.id} className={`rv${projOn ? ' on' : ''} d${Math.min(i + 1, 4)}`}>
+                <TiltCard
+                  className="proj-card"
+                  onClick={() => navigate(`/project/${p.slug}`)}
+                  role="button" tabIndex={0}
+                  onKeyDown={e => e.key === 'Enter' && navigate(`/project/${p.slug}`)}>
+                  <div className="proj-img">
+                    {p.img
+                      ? <img src={p.img} alt={p.title} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : <span className="proj-img-label">Add Image</span>
+                    }
+                    <span className="proj-cat" style={{ background: p.catBg }}>{p.cat}</span>
+                    <span className="proj-yr">{p.year}</span>
+                  </div>
+                  <div className="proj-title">
+                    {PROJECT_MOTIFS[p.slug] && (
+                      <span style={{ display: 'inline-flex', verticalAlign: -3, marginRight: 7 }}>
+                        <MotifIcon name={PROJECT_MOTIFS[p.slug]} color={p.catBg} size={16} />
+                      </span>
+                    )}
+                    {p.title}
+                  </div>
+                  <div className="proj-desc">{p.desc}</div>
+                  <div className="proj-tags">{p.tags.map(t => <span key={t} className="proj-tag">{t}</span>)}</div>
+                </TiltCard>
               </div>
             ))
           }
+        </div>
+
+        {/* Full index — every project, one line each, for a fast scan
+            regardless of the filter tabs above. */}
+        <div className="proj-index">
+          <p className="proj-index-label">Full Index</p>
+          {PROJECTS.map(p => (
+            <div key={p.id} className="proj-index-row" onClick={() => navigate(`/project/${p.slug}`)}
+              role="button" tabIndex={0} onKeyDown={e => e.key === 'Enter' && navigate(`/project/${p.slug}`)}>
+              <span className="proj-index-title">{p.title}</span>
+              <span className="proj-index-meta">{p.cat} · {p.year}</span>
+              <span className="proj-index-arrow">→</span>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -686,8 +754,8 @@ export default function Home() {
           <div className={`rv${aboutOn ? ' on' : ''} d1`}>
             <p className="about-eyebrow">About Me</p>
             <div className="about-heading">
-              <span className="al">Curious by</span>
-              <span className="ab">design.</span>
+              <span className="al"><RevealText text="Curious by" /></span>
+              <span className="ab"><RevealText text="design." /></span>
             </div>
             <p className="about-bio">
               I'm Kate, a multi-disciplinary designer and developer. I've always been drawn to the edges where disciplines overlap: the moment a game's design breaks down into a piece of UX beauty, or a data visualisation becomes a piece of art.<br /><br />
@@ -711,8 +779,8 @@ export default function Home() {
       <section className="toolkit-wrap">
         <p className="sec-eyebrow">Tools & Skills</p>
         <div className="sec-heading">
-          <span className="h1">The</span>
-          <span className="h2">Toolkit</span>
+          <span className="h1"><RevealText text="The" /></span>
+          <span className="h2"><RevealText text="Toolkit" /></span>
         </div>
         <div className="skill-pills">
           {SKILLS.map(s => <span key={s} className="skill-pill">{s}</span>)}

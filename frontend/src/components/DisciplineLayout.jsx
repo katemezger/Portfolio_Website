@@ -1,16 +1,15 @@
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ScatteredSymbolsFixed } from './ScatteredSymbols.jsx'
+import RevealText from './RevealText.jsx'
 
-export default function DisciplineLayout({ num, h1, h2, eyebrow, children }) {
+export default function DisciplineLayout({ num, h1, h2, eyebrow, intro, children }) {
   const navigate = useNavigate()
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 0.4 } }}
       exit={{ opacity: 0, transition: { duration: 0.2 } }}
-      style={{ height: '100vh', overflowY: 'auto', overflowX: 'hidden', background: '#E5EAD8', position: 'relative' }}
+      style={{ height: '100vh', overflowY: 'auto', overflowX: 'hidden', background: '#F4F5F0', position: 'relative' }}
     >
-      <ScatteredSymbolsFixed />
       <style>{`
         .dl-nav {
           position: sticky; top: 0; z-index: 100;
@@ -50,12 +49,17 @@ export default function DisciplineLayout({ num, h1, h2, eyebrow, children }) {
           color: rgba(7,26,18,0.38); margin-bottom: 10px;
         }
         .dl-h1 {
-          display: block; font-family: 'Berkshire Swash', serif; font-weight: 400;
+          display: block; font-family: 'Fraunces', serif; font-weight: 400;
           font-size: clamp(42px,6vw,82px); color: #071A12; line-height: 0.9; letter-spacing: -1px;
         }
         .dl-h2 {
           display: block; font-family: 'Stoke', serif; font-weight: 400;
           font-size: clamp(42px,6vw,82px); color: #186878; line-height: 0.9; letter-spacing: -1px;
+        }
+
+        .dl-intro {
+          font-family: 'Cormorant Garamond', serif; font-size: 18px; line-height: 1.75;
+          color: rgba(7,26,18,0.62); max-width: 980px; margin-top: 18px;
         }
 
         .dl-content { padding: 0 6vw 80px; }
@@ -84,9 +88,9 @@ export default function DisciplineLayout({ num, h1, h2, eyebrow, children }) {
         }
         .dl-card:hover .dl-card-img {
           box-shadow:
-            0 0 28px rgba(212,184,128,0.22),
-            0 0 58px rgba(212,184,128,0.10),
-            inset 0 0 24px rgba(212,184,128,0.07);
+            0 0 28px rgba(24,104,120,0.18),
+            0 0 58px rgba(24,104,120,0.08),
+            inset 0 0 24px rgba(24,104,120,0.06);
         }
         .dl-card-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
         .dl-img-label {
@@ -131,9 +135,10 @@ export default function DisciplineLayout({ num, h1, h2, eyebrow, children }) {
       <div className="dl-header">
         <p className="dl-eyebrow">{eyebrow}</p>
         <div>
-          <span className="dl-h1">{h1}</span>
-          <span className="dl-h2">{h2}</span>
+          <span className="dl-h1"><RevealText text={h1} /></span>
+          <span className="dl-h2"><RevealText text={h2} /></span>
         </div>
+        {intro && <p className="dl-intro">{intro}</p>}
       </div>
 
       <div className="dl-content">{children}</div>
