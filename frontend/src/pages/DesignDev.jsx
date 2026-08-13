@@ -27,7 +27,7 @@ const PROJECTS = [
     title: 'AIS Membership Portal',
     desc:  'Designed and integrated the mobile pages for AI Society\'s membership platform, aligned to current AIS brand guidelines under a one-month deadline.',
     tags:  ['Figma', 'Next.js', 'TypeScript', 'Mobile Design'],
-    img:   '/images/ais_logo_black.png',
+    img:   '/images/projects-gallery/AISPortal-dashboard.png',
     link:  '/project/ais-portal',
   },
 ]
