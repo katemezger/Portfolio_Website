@@ -466,40 +466,27 @@ const PROJECT_ORDER = [
   'netflix-prediction', 'divinity-sales-prediction', 'steam-customer-segmentation',
 ]
 
-// A fixed-height vertical carousel instead of stacking every photo, so the
-// sidebar's height stays constant regardless of how many images a project
-// has (previously a 9-photo gallery made the sidebar run far past the main
-// column). object-fit: contain rather than cover, since gallery images mix
-// wide UI screenshots with portrait event photos and cropping either would
-// cut off real content.
-function GalleryCarousel({ images, projectTitle }) {
-  const [idx, setIdx] = useState(0)
-
-  useEffect(() => {
-    if (images.length <= 1) return
-    const t = setInterval(() => setIdx(i => (i + 1) % images.length), 5000)
-    return () => clearInterval(t)
-  }, [images.length])
-
-  const current = images[idx]
-  const src = typeof current === 'string' ? current : current.src
-  const caption = typeof current === 'string' ? null : current.caption
-
+// Photos stack down the page like before, but the list caps out at roughly
+// 5 images tall and scrolls internally past that (its own scrollbar, not
+// the page's) so a large gallery (TrackSense has 9) can't stretch the
+// sidebar far past the main text column. object-fit: contain rather than
+// cover, since gallery images mix wide UI screenshots with portrait event
+// photos and cropping either would cut off real content.
+function GalleryScroll({ images, projectTitle }) {
   return (
-    <div className="pp-carousel">
-      <div className="pp-carousel-photo">
-        <img src={src} alt={caption || `${projectTitle} gallery image ${idx + 1}`} />
-      </div>
-      <p className="pp-carousel-caption">{caption || `${idx + 1} / ${images.length}`}</p>
-      <div className="pp-carousel-controls">
-        <button aria-label="Previous image" onClick={() => setIdx(i => (i - 1 + images.length) % images.length)}>↑</button>
-        <div className="pp-carousel-dots">
-          {images.map((_, i) => (
-            <span key={i} className={`pp-carousel-dot${i === idx ? ' active' : ''}`} onClick={() => setIdx(i)} />
-          ))}
-        </div>
-        <button aria-label="Next image" onClick={() => setIdx(i => (i + 1) % images.length)}>↓</button>
-      </div>
+    <div className="pp-gallery-scroll">
+      {images.map((item, i) => {
+        const src = typeof item === 'string' ? item : item.src
+        const caption = typeof item === 'string' ? null : item.caption
+        return (
+          <div key={i} className="pp-gallery-scroll-item">
+            <div className="pp-gallery-scroll-photo">
+              <img src={src} alt={caption || `${projectTitle} gallery image ${i + 1}`} loading="lazy" />
+            </div>
+            {caption && <p className="pp-gallery-scroll-caption">{caption}</p>}
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -625,29 +612,23 @@ export default function ProjectPage() {
         .pp-outcome .stat  { font-family: 'Stoke', serif; font-size: 28px; color: ${C.teal}; }
         .pp-outcome .label { font-family: 'Cormorant Garamond', serif; font-size: 13px;
           color: ${C.muted}; letter-spacing: 1px; margin-top: 4px; }
-        .pp-carousel { display: flex; flex-direction: column; }
-        .pp-carousel-photo {
+        .pp-gallery-scroll {
+          display: flex; flex-direction: column; gap: 22px;
+          max-height: 1320px; overflow-y: auto; padding-right: 10px;
+          scrollbar-width: thin; scrollbar-color: rgba(24,104,120,0.35) transparent;
+        }
+        .pp-gallery-scroll::-webkit-scrollbar { width: 6px; }
+        .pp-gallery-scroll::-webkit-scrollbar-track { background: transparent; }
+        .pp-gallery-scroll::-webkit-scrollbar-thumb { background: rgba(24,104,120,0.35); border-radius: 3px; }
+        .pp-gallery-scroll-item { flex: 0 0 auto; }
+        .pp-gallery-scroll-photo {
           position: relative; background: rgba(7,26,18,0.04); border-radius: 4px; overflow: hidden;
-          height: 400px; display: flex; align-items: center; justify-content: center;
+          width: 100%; aspect-ratio: 16 / 9;
           box-shadow: 0 4px 14px rgba(7,26,18,0.12);
         }
-        .pp-carousel-photo img { max-width: 100%; max-height: 100%; width: auto; height: auto; display: block; object-fit: contain; }
-        .pp-carousel-caption { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14px;
-          color: rgba(7,26,18,0.5); margin-top: 10px; text-align: center; line-height: 1.35; min-height: 36px; }
-        .pp-carousel-controls { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 4px; }
-        .pp-carousel-controls button {
-          background: none; border: 1px solid rgba(7,26,18,0.15); border-radius: 50%;
-          width: 28px; height: 28px; cursor: pointer; color: rgba(7,26,18,0.5);
-          font-size: 13px; display: flex; align-items: center; justify-content: center;
-          transition: all 0.2s ease;
-        }
-        .pp-carousel-controls button:hover { border-color: ${C.teal}; color: ${C.teal}; }
-        .pp-carousel-dots { display: flex; gap: 6px; }
-        .pp-carousel-dot {
-          width: 6px; height: 6px; border-radius: 50%; background: rgba(7,26,18,0.15); cursor: pointer;
-          transition: background 0.2s ease;
-        }
-        .pp-carousel-dot.active { background: ${C.teal}; }
+        .pp-gallery-scroll-photo img { width: 100%; height: 100%; display: block; object-fit: cover; }
+        .pp-gallery-scroll-caption { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14px;
+          color: rgba(7,26,18,0.5); margin-top: 10px; text-align: center; line-height: 1.35; }
         .pp-gallery-empty { font-family: 'Cormorant Garamond', serif; font-size: 16px;
           color: rgba(7,26,18,0.3); letter-spacing: 0.5px; margin: 8px 0 28px; }
         .pp-tags  { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
@@ -689,7 +670,7 @@ export default function ProjectPage() {
         <aside className="pp-sidebar">
           <h2 className="pp-h2" style={{ marginTop: 0 }}>Gallery</h2>
           {project.images?.length > 0
-            ? <GalleryCarousel images={project.images} projectTitle={project.title} />
+            ? <GalleryScroll images={project.images} projectTitle={project.title} />
             : <p className="pp-gallery-empty">Gallery coming soon: screenshots, code, and graphs will go here.</p>
           }
         </aside>
