@@ -10,6 +10,13 @@ const PROJECTS = [
     link:  '/project/tracksense-ai',
   },
   {
+    title: 'AIS Membership Portal',
+    desc:  'Designed and integrated the mobile pages for AI Society\'s membership platform, aligned to current AIS brand guidelines under a one-month deadline.',
+    tags:  ['Figma', 'Next.js', 'TypeScript', 'Mobile Design'],
+    img:   '/images/ais_logo_black.png',
+    link:  '/project/ais-portal',
+  },
+  {
     title: 'Eden Portfolio',
     desc:  'A personal portfolio with a whimsical garden aesthetic: custom botanical illustrations, animated blob shapes, and a full design system built from scratch in React.',
     tags:  ['React', 'Framer Motion', 'SVG', 'CSS', 'Design Systems'],
@@ -22,13 +29,6 @@ const PROJECTS = [
     tags:  ['React', 'Hackathon', 'WEHack', 'FinTech', 'Financial Literacy'],
     img:   '/images/projects/time2invest-hero.png',
     link:  '/project/time2invest',
-  },
-  {
-    title: 'AIS Membership Portal',
-    desc:  'Designed and integrated the mobile pages for AI Society\'s membership platform, aligned to current AIS brand guidelines under a one-month deadline.',
-    tags:  ['Figma', 'Next.js', 'TypeScript', 'Mobile Design'],
-    img:   '/images/projects-gallery/AISPortal-dashboard.png',
-    link:  '/project/ais-portal',
   },
 ]
 

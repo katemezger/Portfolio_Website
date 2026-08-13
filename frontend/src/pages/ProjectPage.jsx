@@ -381,8 +381,9 @@ The aesthetic direction is "whimsical botanical garden": cream backgrounds, fore
     duration: '~1 month',
     tools:    ['Figma', 'Next.js', 'TypeScript'],
     githubUrl: 'https://github.com/katemezger/portal',
-    heroImage: '/images/projects-gallery/AISPortal-dashboard.png',
+    heroImage: '/images/ais_logo_black.png',
     images: [
+      { src: '/images/projects-gallery/AISPortal-dashboard.png', caption: 'The member dashboard: announcements, RSVPs, and personalized event recommendations' },
       { src: '/images/projects-gallery/AISPortal-apply.png', caption: 'The program selection flow: AI Academy, AI Mentorship, and Officer applications' },
       { src: '/images/projects-gallery/AISPortal-events.png', caption: 'Browsing events with tag-based filtering and RSVP status' },
       { src: '/images/projects-gallery/AISPortal-onboarding.png', caption: 'New member onboarding: the profile completion flow' },
@@ -461,19 +462,47 @@ The aesthetic direction is "whimsical botanical garden": cream backgrounds, fore
 // Matches the homepage's display order, so "Next Project" cycles the same
 // way a visitor would naturally browse from the project grid.
 const PROJECT_ORDER = [
-  'tracksense-ai', 'eden-portfolio', 'cgs-usability-study', 'time2invest',
-  'netflix-prediction', 'divinity-sales-prediction', 'steam-customer-segmentation', 'ais-portal',
+  'tracksense-ai', 'ais-portal', 'eden-portfolio', 'cgs-usability-study', 'time2invest',
+  'netflix-prediction', 'divinity-sales-prediction', 'steam-customer-segmentation',
 ]
 
-// Cycled per gallery image so the collage has real variety in shape, size,
-// Just varies the crop aspect ratio so the gallery isn't a monotonous grid
-// of identical rectangles — no tilt/tape here, project pages stay clean.
-const GALLERY_VARIANTS = [
-  { aspect: '4 / 3' },
-  { aspect: '1 / 1' },
-  { aspect: '16 / 10' },
-  { aspect: '3 / 4' },
-]
+// A fixed-height vertical carousel instead of stacking every photo, so the
+// sidebar's height stays constant regardless of how many images a project
+// has (previously a 9-photo gallery made the sidebar run far past the main
+// column). object-fit: contain rather than cover, since gallery images mix
+// wide UI screenshots with portrait event photos and cropping either would
+// cut off real content.
+function GalleryCarousel({ images, projectTitle }) {
+  const [idx, setIdx] = useState(0)
+
+  useEffect(() => {
+    if (images.length <= 1) return
+    const t = setInterval(() => setIdx(i => (i + 1) % images.length), 5000)
+    return () => clearInterval(t)
+  }, [images.length])
+
+  const current = images[idx]
+  const src = typeof current === 'string' ? current : current.src
+  const caption = typeof current === 'string' ? null : current.caption
+
+  return (
+    <div className="pp-carousel">
+      <div className="pp-carousel-photo">
+        <img src={src} alt={caption || `${projectTitle} gallery image ${idx + 1}`} />
+      </div>
+      <p className="pp-carousel-caption">{caption || `${idx + 1} / ${images.length}`}</p>
+      <div className="pp-carousel-controls">
+        <button aria-label="Previous image" onClick={() => setIdx(i => (i - 1 + images.length) % images.length)}>↑</button>
+        <div className="pp-carousel-dots">
+          {images.map((_, i) => (
+            <span key={i} className={`pp-carousel-dot${i === idx ? ' active' : ''}`} onClick={() => setIdx(i)} />
+          ))}
+        </div>
+        <button aria-label="Next image" onClick={() => setIdx(i => (i + 1) % images.length)}>↓</button>
+      </div>
+    </div>
+  )
+}
 
 /* ─── colour tokens ──────────────────────────────────────────────────────── */
 const C = {
@@ -570,7 +599,7 @@ export default function ProjectPage() {
       <style>{`
         .pp-body  { max-width: 1160px; margin: 0 auto; padding: 0 6vw 100px; }
         .pp-hero  { width: 100%; aspect-ratio: 16/7; object-fit: cover; display: block; }
-        .pp-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 56px; align-items: start; }
+        .pp-layout { display: grid; grid-template-columns: 1fr 1.55fr; gap: 56px; align-items: start; }
         @media (max-width: 860px) {
           .pp-layout { grid-template-columns: 1fr; }
           .pp-sidebar { position: static !important; order: 2; }
@@ -596,17 +625,29 @@ export default function ProjectPage() {
         .pp-outcome .stat  { font-family: 'Stoke', serif; font-size: 28px; color: ${C.teal}; }
         .pp-outcome .label { font-family: 'Cormorant Garamond', serif; font-size: 13px;
           color: ${C.muted}; letter-spacing: 1px; margin-top: 4px; }
-        .pp-gallery { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        .pp-gallery-item { margin: 0; }
-        .pp-gallery-photo {
-          position: relative; background: #fff; border-radius: 4px; overflow: hidden;
+        .pp-carousel { display: flex; flex-direction: column; }
+        .pp-carousel-photo {
+          position: relative; background: rgba(7,26,18,0.04); border-radius: 4px; overflow: hidden;
+          height: 400px; display: flex; align-items: center; justify-content: center;
           box-shadow: 0 4px 14px rgba(7,26,18,0.12);
-          transition: box-shadow 0.25s ease;
         }
-        .pp-gallery-item:hover .pp-gallery-photo { box-shadow: 0 8px 22px rgba(7,26,18,0.2); }
-        .pp-gallery-photo img { width: 100%; height: 100%; display: block; object-fit: cover; }
-        .pp-gallery-item figcaption { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14px;
-          color: rgba(7,26,18,0.5); margin-top: 8px; text-align: center; line-height: 1.35; }
+        .pp-carousel-photo img { max-width: 100%; max-height: 100%; width: auto; height: auto; display: block; object-fit: contain; }
+        .pp-carousel-caption { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14px;
+          color: rgba(7,26,18,0.5); margin-top: 10px; text-align: center; line-height: 1.35; min-height: 36px; }
+        .pp-carousel-controls { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 4px; }
+        .pp-carousel-controls button {
+          background: none; border: 1px solid rgba(7,26,18,0.15); border-radius: 50%;
+          width: 28px; height: 28px; cursor: pointer; color: rgba(7,26,18,0.5);
+          font-size: 13px; display: flex; align-items: center; justify-content: center;
+          transition: all 0.2s ease;
+        }
+        .pp-carousel-controls button:hover { border-color: ${C.teal}; color: ${C.teal}; }
+        .pp-carousel-dots { display: flex; gap: 6px; }
+        .pp-carousel-dot {
+          width: 6px; height: 6px; border-radius: 50%; background: rgba(7,26,18,0.15); cursor: pointer;
+          transition: background 0.2s ease;
+        }
+        .pp-carousel-dot.active { background: ${C.teal}; }
         .pp-gallery-empty { font-family: 'Cormorant Garamond', serif; font-size: 16px;
           color: rgba(7,26,18,0.3); letter-spacing: 0.5px; margin: 8px 0 28px; }
         .pp-tags  { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
@@ -648,24 +689,7 @@ export default function ProjectPage() {
         <aside className="pp-sidebar">
           <h2 className="pp-h2" style={{ marginTop: 0 }}>Gallery</h2>
           {project.images?.length > 0
-            ? (
-              <div className="pp-gallery">
-                {project.images.map((img, i) => {
-                  const src = typeof img === 'string' ? img : img.src
-                  const caption = typeof img === 'string' ? null : img.caption
-                  const v = GALLERY_VARIANTS[i % GALLERY_VARIANTS.length]
-                  return (
-                    <figure key={i} className="pp-gallery-item">
-                      <div className="pp-gallery-photo">
-                        <img src={src} alt={caption || `${project.title} gallery image ${i + 1}`}
-                          style={{ aspectRatio: v.aspect }} />
-                      </div>
-                      {caption && <figcaption>{caption}</figcaption>}
-                    </figure>
-                  )
-                })}
-              </div>
-            )
+            ? <GalleryCarousel images={project.images} projectTitle={project.title} />
             : <p className="pp-gallery-empty">Gallery coming soon: screenshots, code, and graphs will go here.</p>
           }
         </aside>

@@ -42,6 +42,18 @@ const PROJECTS = [
   },
   {
     id: 2,
+    slug:  'ais-portal',
+    title: 'AIS Membership Portal',
+    cat:   'Design & Development',
+    type:  'design',
+    catBg: '#0A3020',
+    year:  'Jun 2026',
+    desc:  'Designed and integrated the mobile pages for AI Society\'s membership platform, aligned to current AIS brand guidelines under a one-month deadline.',
+    tags:  ['Figma', 'Next.js', 'TypeScript', 'Mobile Design'],
+    img:   '/images/ais_logo_black.png',
+  },
+  {
+    id: 3,
     slug:  'eden-portfolio',
     title: 'Eden Portfolio',
     cat:   'Design & Development',
@@ -53,7 +65,7 @@ const PROJECTS = [
     img:   '/images/projects/eden-portfolio-hero.png',
   },
   {
-    id: 3,
+    id: 4,
     slug:  'cgs-usability-study',
     title: 'MonkeyType vs KeyHero',
     cat:   'UX Quantitative Research',
@@ -65,7 +77,7 @@ const PROJECTS = [
     img:   '/images/projects/cgs-usability-study-hero.png',
   },
   {
-    id: 4,
+    id: 5,
     slug:  'time2invest',
     title: 'Time2Invest',
     cat:   'Design & Development',
@@ -77,7 +89,7 @@ const PROJECTS = [
     img:   '/images/projects/time2invest-hero.png',
   },
   {
-    id: 5,
+    id: 6,
     slug:  'netflix-prediction',
     title: 'Predicting Netflix Success',
     cat:   'AI/ML & Data Science',
@@ -89,7 +101,7 @@ const PROJECTS = [
     img:   '/images/projects/netflix-prediction-hero.png',
   },
   {
-    id: 6,
+    id: 7,
     slug:  'divinity-sales-prediction',
     title: 'Divinity: First-Year Sales Prediction',
     cat:   'AI/ML & Data Science',
@@ -101,7 +113,7 @@ const PROJECTS = [
     img:   '/images/projects/divinity-sales-prediction-hero.svg',
   },
   {
-    id: 7,
+    id: 8,
     slug:  'steam-customer-segmentation',
     title: 'Customer Segmentation for Steam',
     cat:   'AI/ML & Data Science',
@@ -111,18 +123,6 @@ const PROJECTS = [
     desc:  'Unsupervised clustering on 200K Steam interaction logs to surface four distinct player personas, deployed as a FastAPI microservice.',
     tags:  ['Python', 'Scikit-learn', 'K-Means', 'PCA', 'FastAPI'],
     img:   '/images/projects/steam-customer-segmentation-hero.svg',
-  },
-  {
-    id: 8,
-    slug:  'ais-portal',
-    title: 'AIS Membership Portal',
-    cat:   'Design & Development',
-    type:  'design',
-    catBg: '#0A3020',
-    year:  'Jun 2026',
-    desc:  'Designed and integrated the mobile pages for AI Society\'s membership platform, aligned to current AIS brand guidelines under a one-month deadline.',
-    tags:  ['Figma', 'Next.js', 'TypeScript', 'Mobile Design'],
-    img:   '/images/projects-gallery/AISPortal-dashboard.png',
   },
 ]
 
