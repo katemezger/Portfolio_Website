@@ -63,8 +63,8 @@ export default function StarCursor() {
         #star-cursor.hovered svg {
           transform: scale(2.2);
           filter:
-            drop-shadow(0 0 5px rgba(24,104,120,0.70))
-            drop-shadow(0 0 12px rgba(141,196,192,0.45));
+            drop-shadow(0 0 5px rgba(var(--terra-rgb),0.70))
+            drop-shadow(0 0 12px rgba(var(--forest-rgb),0.45));
         }
       `}</style>
 
@@ -73,9 +73,9 @@ export default function StarCursor() {
           {/* 4-pointed sparkle star matching the ✦ aesthetic */}
           <path
             d="M 0,-11 C 1,-4 4,-1 11,0 C 4,1 1,4 0,11 C -1,4 -4,1 -11,0 C -4,-1 -1,-4 0,-11 Z"
-            fill="#186878"
+            style={{ fill: 'var(--terra)' }}
           />
-          <circle cx="0" cy="0" r="2.2" fill="#8DC4C0" />
+          <circle cx="0" cy="0" r="2.2" style={{ fill: 'var(--forest)' }} />
         </svg>
       </div>
     </>

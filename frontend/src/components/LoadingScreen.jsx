@@ -14,7 +14,7 @@ function VineLeaf({ angle, delay }) {
     >
       <path
         d="M 0,-7 C 3.5,-5 5,0 3.5,3.5 C 2,6 0,7 0,7 C 0,7 -2,6 -3.5,3.5 C -5,0 -3.5,-5 0,-7 Z"
-        fill="#186878" opacity="0.85"
+        fill="var(--terra)" opacity="0.85"
       />
     </g>
   )
@@ -37,7 +37,7 @@ export default function LoadingScreen() {
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 100000,
-      background: '#F4F5F0',
+      background: 'var(--bg)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       opacity: out ? 0 : 1,
       transition: 'opacity 0.5s ease',
@@ -65,11 +65,11 @@ export default function LoadingScreen() {
         <svg width="160" height="160" viewBox="0 0 160 160" fill="none">
           {/* Faint track */}
           <circle cx="80" cy="80" r="68"
-            stroke="rgba(7,26,18,0.10)" strokeWidth="1.5" />
+            stroke="rgba(var(--ink-rgb),0.10)" strokeWidth="1.5" />
 
           {/* Vine that draws itself around */}
           <circle cx="80" cy="80" r="68"
-            stroke="#186878" strokeWidth="2.2"
+            stroke="var(--terra)" strokeWidth="2.2"
             strokeDasharray={CIRC.toFixed(1)}
             strokeDashoffset={CIRC.toFixed(1)}
             strokeLinecap="round"
@@ -96,14 +96,14 @@ export default function LoadingScreen() {
         }}>
           <span style={{
             fontFamily: "'La Belle Aurore', cursive",
-            fontSize: 30, color: '#071A12', letterSpacing: 1, lineHeight: 1,
+            fontSize: 30, color: 'var(--ink)', letterSpacing: 1, lineHeight: 1,
           }}>
             Eden
           </span>
           <span style={{
-            fontFamily: "'Cormorant Garamond', serif",
+            fontFamily: "'Quicksand', sans-serif",
             fontSize: 9, letterSpacing: 4, textTransform: 'uppercase',
-            color: 'rgba(7,26,18,0.38)', marginTop: 6,
+            color: 'rgba(var(--ink-rgb),0.58)', marginTop: 6,
           }}>
             loading
             <span style={{ animation: 'lsDot 1.2s ease 0.5s infinite' }}>.</span>

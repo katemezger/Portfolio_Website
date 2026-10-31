@@ -11,10 +11,6 @@ import Home             from './pages/Home.jsx'
 // The rest stay lazy so a visit to one of them doesn't pay the JS parse cost
 // of every other page up front — each route's chunk downloads only when
 // it's actually visited.
-const DesignDev        = lazy(() => import('./pages/DesignDev.jsx'))
-const ResearchUX       = lazy(() => import('./pages/ResearchUX.jsx'))
-const AnalyticsScience = lazy(() => import('./pages/AnalyticsScience.jsx'))
-const Other            = lazy(() => import('./pages/Other.jsx'))
 const ProjectPage      = lazy(() => import('./pages/ProjectPage.jsx'))
 const NotFound         = lazy(() => import('./pages/NotFound.jsx'))
 
@@ -25,10 +21,6 @@ function AnimatedRoutes() {
       <Suspense fallback={null}>
         <Routes location={location} key={location.pathname}>
           <Route path="/"                  element={<Home />} />
-          <Route path="/design-dev"        element={<DesignDev />} />
-          <Route path="/research-ux"       element={<ResearchUX />} />
-          <Route path="/analytics-science" element={<AnalyticsScience />} />
-          <Route path="/other"             element={<Other />} />
           {/* Project case-study pages — see src/pages/ProjectPage.jsx to add projects */}
           <Route path="/project/:slug"     element={<ProjectPage />} />
           <Route path="*"                  element={<NotFound />} />

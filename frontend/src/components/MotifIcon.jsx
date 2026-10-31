@@ -20,6 +20,8 @@ export default function MotifIcon({ name, color, size = 20 }) {
       return <svg {...p}><path d="M6 8.5H10M8 6.5V10.5" /><circle cx="16.5" cy="8" r="0.9" fill={color} stroke="none" /><circle cx="18.5" cy="10" r="0.9" fill={color} stroke="none" /><path d="M5 8C3 8 2 10 2 13C2 16 3.5 18 5.5 17C7 16.3 7.5 15 9 15H15C16.5 15 17 16.3 18.5 17C20.5 18 22 16 22 13C22 10 21 8 19 8C17 8 16.5 9 12 9C7.5 9 7 8 5 8Z" /></svg>
     case 'chip':
       return <svg {...p}><rect x="7" y="7" width="10" height="10" rx="1" /><line x1="9" y1="2" x2="9" y2="7" /><line x1="12" y1="2" x2="12" y2="7" /><line x1="15" y1="2" x2="15" y2="7" /><line x1="9" y1="17" x2="9" y2="22" /><line x1="12" y1="17" x2="12" y2="22" /><line x1="15" y1="17" x2="15" y2="22" /><line x1="2" y1="9" x2="7" y2="9" /><line x1="2" y1="12" x2="7" y2="12" /><line x1="2" y1="15" x2="7" y2="15" /><line x1="17" y1="9" x2="22" y2="9" /><line x1="17" y1="12" x2="22" y2="12" /><line x1="17" y1="15" x2="22" y2="15" /></svg>
+    case 'form':
+      return <svg {...p}><path d="M7 2.5H15L19 6.5V20.5C19 21.05 18.55 21.5 18 21.5H7C6.45 21.5 6 21.05 6 20.5V3.5C6 2.95 6.45 2.5 7 2.5Z" /><path d="M15 2.5V6.5H19" /><line x1="9" y1="11" x2="15" y2="11" /><line x1="9" y1="14.5" x2="15" y2="14.5" /><line x1="9" y1="18" x2="13" y2="18" /></svg>
     default:
       return null
   }
@@ -36,4 +38,5 @@ export const PROJECT_MOTIFS = {
   'divinity-sales-prediction': 'dice',
   'steam-customer-segmentation': 'controller',
   'ais-portal': 'chip',
+  'cloverleaf-intake-redesign': 'form',
 }

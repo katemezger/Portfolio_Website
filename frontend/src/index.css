@@ -7,38 +7,63 @@
   box-sizing: border-box;
 }
 
+/* ── Palette ──────────────────────────────────────────────────────────────
+   Every colour on the site reads from these variables. The site is
+   dark-only (the old light stone palette was retired Oct 2026).
+
+   The dark palette swaps roles rather than darkening everything: backgrounds go
+   dark, --ink (body text) becomes parchment, and the text accents
+   (--forest, --terra, --sage) get *lighter* so they still read on dark.
+   The *-fill tokens are for solid bands and chips that sit under light
+   text (About, footer, category chips, buttons), so they stay deep in
+   both themes. */
+:root {
+  --bg:          #1A1714;   /* home page */
+  --bg-case:     #1E1A17;   /* case-study pages */
+  --rail:        #2A2521;   /* left nav */
+  --ink:         #E8E1D6;   /* body text */
+  --ink-rgb:     232,225,214;
+  --forest:      #A7B6D6;   /* slate blue: headings */
+  --forest-rgb:  167,182,214;
+  --terra:       #C3A6E8;   /* lavender: links, subtitles, hovers, cursor */
+  --terra-rgb:   195,166,232;
+  --stone:       #A89C8C;
+  --sage:        #A6BFA0;   /* moss green */
+  --forest-fill: #33453D;
+  --terra-fill:  #4B3466;   /* deep plum: buttons, UX tag */
+  --ink-fill:    #3A332D;
+  --footer-bg:   #100E0C;
+  --paper:       #E8E1D6;   /* text on fills; light in both themes */
+  color-scheme: dark;
+}
+
 html, body, #root {
   width: 100%;
   height: 100%;
 }
 
 body {
-  background: #F4F5F0;
+  background: var(--bg);
   overflow: hidden;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Quicksand', sans-serif;
   font-weight: 400;
-  color: #071A12;
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
 }
 
 ::-webkit-scrollbar        { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track  { background: transparent; }
-::-webkit-scrollbar-thumb  { background: rgba(7,26,18,0.18); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(7,26,18,0.35); }
+::-webkit-scrollbar-thumb  { background: rgba(var(--ink-rgb),0.18); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(var(--ink-rgb),0.35); }
 
 ::selection {
-  background: rgba(24,104,120,0.2);
-  color: #071A12;
-}
-
-@keyframes marqueeScroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  background: rgba(var(--terra-rgb),0.3);
+  color: var(--ink);
 }
 
 /* Respect the OS-level "reduce motion" setting: kill the blob morphing,
-   floating symbols, marquee scroll, loading-screen vine draw, and cursor
-   hover bounce, all of which are otherwise-infinite CSS animations. */
+   floating symbols, loading-screen vine draw, and cursor hover bounce, all
+   of which are otherwise-infinite CSS animations. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

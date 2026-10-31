@@ -1,20 +1,14 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import ScatteredSymbols from '../components/ScatteredSymbols.jsx'
 import MotifIcon, { PROJECT_MOTIFS } from '../components/MotifIcon.jsx'
-import TiltCard from '../components/TiltCard.jsx'
 import RevealText from '../components/RevealText.jsx'
+import Drift, { ScrollContainerContext } from '../components/Drift.jsx'
+import PolaroidPhoto from '../components/PolaroidPhoto.jsx'
+import LeftNav, { LEFTNAV_WIDTH, LEFTNAV_MOBILE_BP } from '../components/LeftNav.jsx'
 import useDocumentTitle from '../components/useDocumentTitle.js'
 
 /* ─── data ────────────────────────────────────── */
-const DISCIPLINES = [
-  { num: '01', title: 'Design & Development', page: 'design-dev',        desc: 'Human-centred design. From wireframes to polished interfaces, bridging user needs and creative vision.',  tools: ['Figma', 'React', 'CSS', 'Prototyping'],               bg: '#0A3020', fg: '#F0EDE6', iconDim: 'rgba(240,237,230,0.35)' },
-  { num: '02', title: 'UX/UI',                page: 'research-ux',       desc: 'Deep user insight through qualitative and quantitative methods. Research that actually drives decisions.',   tools: ['User Research', 'Usability Testing', 'Wireframing'],  bg: '#186878', fg: '#F0EDE6', iconDim: 'rgba(240,237,230,0.35)' },
-  { num: '03', title: 'AI/ML & Data Science', page: 'analytics-science', desc: 'Turning raw numbers into stories. ML models, visualisations, and asking the right questions.',             tools: ['Python', 'Pandas', 'Sklearn', 'D3.js'],               bg: '#8DC4C0', fg: '#071A12', iconDim: 'rgba(7,26,18,0.3)'   },
-  { num: '04', title: 'Other',                page: 'other',             desc: 'Experiments, side projects, and things that defy easy categories. Creative explorations.',                  tools: ['Various', 'Experimental'],                            bg: '#071A12', fg: '#F0EDE6', iconDim: 'rgba(240,237,230,0.35)' },
-]
-
 // ─────────────────────────────────────────────────────────────────────────────
 // HOW TO ADD A PROJECT (Home page card)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -27,26 +21,38 @@ const DISCIPLINES = [
 //    placeholder colour block.
 // 5. Run the dev server — the card appears instantly.
 // ─────────────────────────────────────────────────────────────────────────────
+// One color per category, looked up by name — lets a project belong to more
+// than one category (e.g. TrackSense is both a design/dev build and an AI
+// project) without needing a separate "which color" field per project.
+const CATEGORY_COLORS = {
+  'Design & Development':     'var(--forest)',
+  'AI/ML & Data Science':     'var(--ink)',
+  'UX Quantitative Research': 'var(--terra)',
+}
+// Chip backgrounds sit under light text, so they use the deep "fill"
+// tokens, which stay dark in both themes (the text tokens above lighten).
+const CATEGORY_FILLS = {
+  'Design & Development':     'var(--forest-fill)',
+  'AI/ML & Data Science':     'var(--ink-fill)',
+  'UX Quantitative Research': 'var(--terra-fill)',
+}
+
 const PROJECTS = [
   {
     id: 1,
     slug:  'tracksense-ai',
     title: 'TrackSense AI',
-    cat:   'Design & Development',
-    type:  'design',
-    catBg: '#0A3020',
+    cats:  ['Design & Development', 'AI/ML & Data Science'],
     year:  '2026',
     desc:  'Frontend design and development for an AI-powered Formula 1 race analytics platform, presented at AIM S26.',
     tags:  ['React', 'UI Design', 'Formula 1', 'Data Visualisation'],
-    img:   '/images/projects/tracksense-ai-hero.png',
+    img:   '/images/projects/tracksense-ai-hero.webp',
   },
   {
     id: 2,
     slug:  'ais-portal',
     title: 'AIS Membership Portal',
-    cat:   'Design & Development',
-    type:  'design',
-    catBg: '#0A3020',
+    cats:  ['Design & Development'],
     year:  'Jun 2026',
     desc:  'Designed and integrated the mobile pages for AI Society\'s membership platform, aligned to current AIS brand guidelines under a one-month deadline.',
     tags:  ['Figma', 'Next.js', 'TypeScript', 'Mobile Design'],
@@ -56,9 +62,7 @@ const PROJECTS = [
     id: 3,
     slug:  'eden-portfolio',
     title: 'Eden Portfolio',
-    cat:   'Design & Development',
-    type:  'design',
-    catBg: '#0A3020',
+    cats:  ['Design & Development'],
     year:  '2026',
     desc:  'A whimsical personal portfolio with a garden aesthetic, animated blob shapes, and a custom botanical design system built in React.',
     tags:  ['React', 'Framer Motion', 'SVG', 'CSS'],
@@ -66,80 +70,84 @@ const PROJECTS = [
   },
   {
     id: 4,
-    slug:  'cgs-usability-study',
-    title: 'MonkeyType vs KeyHero',
-    cat:   'UX Quantitative Research',
-    type:  'ux',
-    catBg: '#186878',
-    year:  '2025',
-    desc:  'A comparative usability study measuring WPM, accuracy, and test duration across two popular typing platforms.',
-    tags:  ['Usability Testing', 'HCI', 'Think-Aloud', 'Data Analysis'],
-    img:   '/images/projects/cgs-usability-study-hero.png',
+    slug:  'steam-customer-segmentation',
+    title: 'Customer Segmentation for Steam',
+    cats:  ['AI/ML & Data Science', 'Design & Development'],
+    year:  'Jun 2026',
+    desc:  'Unsupervised clustering on 200K Steam interaction logs to surface four distinct player personas, deployed as a FastAPI microservice.',
+    tags:  ['Python', 'Scikit-learn', 'K-Means', 'PCA', 'FastAPI'],
+    img:   '/images/projects/steam-customer-segmentation-hero.svg',
   },
   {
     id: 5,
-    slug:  'time2invest',
-    title: 'Time2Invest',
-    cat:   'Design & Development',
-    type:  'design',
-    catBg: '#0A3020',
-    year:  '2026',
-    desc:  'A 24-hour WEHack hackathon build: a financial literacy tool that teaches investing through real historical headlines and market data.',
-    tags:  ['Hackathon', 'WEHack', 'FinTech', 'React'],
-    img:   '/images/projects/time2invest-hero.png',
+    slug:  'cloverleaf-intake-redesign',
+    title: 'Cloverleaf CMS: Client Intake Redesign',
+    cats:  ['Design & Development'],
+    year:  'Aug 2026 – Present',
+    desc:  'Redesigned the color scheme, typography, and UI standards for the client intake flow inside a live compliance-sensitive case management platform.',
+    tags:  ['Design Systems', 'Typography', 'UI Standards'],
+    img:   '/images/projects/cloverleaf-logo.png',
   },
   {
     id: 6,
-    slug:  'netflix-prediction',
-    title: 'Predicting Netflix Success',
-    cat:   'AI/ML & Data Science',
-    type:  'ai',
-    catBg: '#071A12',
-    year:  '2026',
-    desc:  'A data science study testing whether genre, country, and release metadata can predict Netflix title success.',
-    tags:  ['R', 'Machine Learning', 'tidyverse', 'Data Analysis'],
-    img:   '/images/projects/netflix-prediction-hero.png',
+    slug:  'cgs-usability-study',
+    title: 'MonkeyType vs KeyHero',
+    cats:  ['UX Quantitative Research'],
+    year:  '2025',
+    desc:  'A comparative usability study measuring WPM, accuracy, and test duration across two popular typing platforms.',
+    tags:  ['Usability Testing', 'HCI', 'Think-Aloud', 'Data Analysis'],
+    img:   '/images/projects/cgs-usability-study-hero.webp',
   },
   {
     id: 7,
+    slug:  'time2invest',
+    title: 'Time2Invest',
+    cats:  ['Design & Development'],
+    year:  '2026',
+    desc:  'A 24-hour WEHack hackathon build: a financial literacy tool that teaches investing through real historical headlines and market data.',
+    tags:  ['Hackathon', 'WEHack', 'FinTech', 'React'],
+    img:   '/images/projects/time2invest-hero.webp',
+  },
+  {
+    id: 8,
+    slug:  'netflix-prediction',
+    title: 'Predicting Netflix Success',
+    cats:  ['AI/ML & Data Science'],
+    year:  '2026',
+    desc:  'A data science study testing whether genre, country, and release metadata can predict Netflix title success.',
+    tags:  ['R', 'Machine Learning', 'tidyverse', 'Data Analysis'],
+    img:   '/images/projects/netflix-prediction-hero.webp',
+  },
+  {
+    id: 9,
     slug:  'divinity-sales-prediction',
     title: 'Divinity: First-Year Sales Prediction',
-    cat:   'AI/ML & Data Science',
-    type:  'ai',
-    catBg: '#071A12',
+    cats:  ['AI/ML & Data Science'],
     year:  'Dec 2025',
     desc:  'A machine learning model forecasting first-year sales for an upcoming Larian Studios game using comparable RPG performance data.',
     tags:  ['Python', 'Machine Learning', 'Jupyter', 'Data Cleaning'],
     img:   '/images/projects/divinity-sales-prediction-hero.svg',
   },
   {
-    id: 8,
-    slug:  'steam-customer-segmentation',
-    title: 'Customer Segmentation for Steam',
-    cat:   'AI/ML & Data Science',
-    type:  'ai',
-    catBg: '#071A12',
-    year:  'Jun 2026',
-    desc:  'Unsupervised clustering on 200K Steam interaction logs to surface four distinct player personas, deployed as a FastAPI microservice.',
-    tags:  ['Python', 'Scikit-learn', 'K-Means', 'PCA', 'FastAPI'],
-    img:   '/images/projects/steam-customer-segmentation-hero.svg',
+    id: 10,
+    slug:  'halo-ideathon',
+    title: 'Halo',
+    cats:  ['Design & Development'],
+    year:  'Sep 2026 – Oct 2026',
+    desc:  'An AI companion concept for Aston Martin F1\'s fan community, placing 3rd overall at the Cognizant × Aston Martin Ideathon in Austin, TX.',
+    tags:  ['Ideathon', 'Product Concept', 'AI UX', 'Fan Engagement'],
+    img:   '/images/projects-gallery/Cognizant-1.webp',
   },
 ]
 
-// `img` left unset on purpose: the portal is meant for small, legible crops
-// (a code snippet, a page screenshot) rather than the full project hero
-// banners, which look muddy squeezed into a small circle. Drop a path here
-// once you have those crops.
-const PORTAL_ITEMS = [
-  { id: 1, cat: 'Design & Development', bg: '#0A3020' },
-  { id: 2, cat: 'UX/UI',               bg: '#186878' },
-  { id: 3, cat: 'AI/ML & Data Science',bg: '#071A12' },
-  { id: 4, cat: 'Other',               bg: '#0A3020' },
-  { id: 5, cat: 'Design & Development',bg: '#186878' },
-  { id: 6, cat: 'AI/ML & Data Science',bg: '#071A12' },
+// Hand-picked, in display order — the 3 flagships (see memory) plus 3 more
+// range-showing pieces (UX research, data/AI, a hackathon build). No filter
+// tabs: references consistently show a small, curated "featured work" set
+// rather than a filterable grid. 6 total = 2 rows of 3 in the grid below.
+const FEATURED_SLUGS = [
+  'tracksense-ai', 'ais-portal', 'cloverleaf-intake-redesign',
+  'steam-customer-segmentation', 'cgs-usability-study', 'halo-ideathon',
 ]
-
-const MARQUEE = ['DESIGN', 'UX/UI', 'AI & ML', 'DATA SCIENCE', 'DEVELOPMENT', 'RESEARCH', 'BRAND']
 
 const TOOLS = {
   DESIGN:        ['Figma', 'After Effects', 'Illustrator', 'Photoshop', 'Framer'],
@@ -150,12 +158,19 @@ const TOOLS = {
 
 const SKILLS = ['Systems Thinking', 'Prototyping', 'Visual Storytelling', 'Data Modelling', 'Human-AI Interaction', 'Game Mechanics', 'Typography', 'Motion Design', 'User Research']
 
-const FILTERS = [
-  { label: 'ALL',           fn: () => true },
-  { label: 'DESIGN & DEV', fn: p => p.type === 'design' },
-  { label: 'UX/UI',        fn: p => p.type === 'ux'     },
-  { label: 'AI/ML & DATA', fn: p => p.type === 'ai'     },
-  { label: 'OTHER',        fn: p => p.type === 'other'  },
+// Every photo that actually has Kate in it, physically — solo presenting
+// shots and team photos from TrackSense (AIM Night) and Halo (the
+// Cognizant x Aston Martin Ideathon). Cycled in the hero background.
+// kate.jpg (the About section portrait) is deliberately excluded — it's a
+// tight portrait crop that reads oddly next to the wide event photos here.
+const HERO_PHOTOS = [
+  '/images/projects-gallery/tracksense-solospeak.webp',
+  '/images/projects-gallery/tracksense-team.webp',
+  '/images/projects-gallery/tracksense-teamend.webp',
+  '/images/projects-gallery/Cognizant-Team.webp',
+  '/images/projects-gallery/Cognizant-Winners.webp',
+  '/images/projects-gallery/Cognizant-Janet.jpg',
+  '/images/projects-gallery/Cognizant-Full.webp',
 ]
 
 const SOCIALS = [
@@ -168,145 +183,6 @@ const SOCIALS = [
   { label: 'Resume',   href: '/resume.pdf',                    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="18" height="18"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> },
 ]
 
-
-
-/* ─── organic blob photo frame ────────────────── */
-// Raw path in a 400x510 reference box (used for the visible border overlay,
-// which scales correctly via the SVG viewBox).
-const ABOUT_BLOB = "M 42,24 Q 120,8 200,18 Q 280,28 362,12 Q 390,16 388,50 Q 396,150 388,252 Q 380,354 390,438 Q 392,470 358,482 Q 276,498 196,486 Q 116,474 44,492 Q 16,486 12,454 Q 4,354 14,252 Q 24,150 8,50 Q 8,18 42,24 Z"
-
-// Same shape normalised to 0-1 (objectBoundingBox units) for the actual clip.
-// CSS `clip-path: path()` uses raw pixel coordinates with no viewBox concept,
-// so applying ABOUT_BLOB directly only lines up when the box happens to
-// render at exactly 400x510px; at any other size (i.e. almost always, since
-// the frame is `width: 100%` in a responsive grid) the clip region overshoots
-// or undershoots the box, which is what made the photo appear cropped into
-// the top-left corner. An SVG clipPath with clipPathUnits="objectBoundingBox"
-// scales with the element instead.
-const ABOUT_BLOB_NORM = "M 0.105,0.0471 Q 0.3,0.0157 0.5,0.0353 Q 0.7,0.0549 0.905,0.0235 Q 0.975,0.0314 0.97,0.098 Q 0.99,0.2941 0.97,0.4941 Q 0.95,0.6941 0.975,0.8588 Q 0.98,0.9216 0.895,0.9451 Q 0.69,0.9765 0.49,0.9529 Q 0.29,0.9294 0.11,0.9647 Q 0.04,0.9529 0.03,0.8902 Q 0.01,0.6941 0.035,0.4941 Q 0.06,0.2941 0.02,0.098 Q 0.02,0.0353 0.105,0.0471 Z"
-
-// ── PHOTO: save your headshot to  frontend/public/images/kate.jpg  ──────────
-
-function BlobPhotoFrame() {
-  return (
-    <div style={{ position: 'relative', width: '100%', aspectRatio: '4/5' }}>
-      <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
-        <defs>
-          <clipPath id="about-blob-clip" clipPathUnits="objectBoundingBox">
-            <path d={ABOUT_BLOB_NORM} />
-          </clipPath>
-        </defs>
-      </svg>
-      {/* Photo clipped to the blob shape via an SVG clipPath (scales with the box).
-          Rendered as a background image (zoomed via background-size) rather
-          than an <img> with a CSS transform: a transform scales the whole
-          rendered element — including its already-clipped shape — past its
-          own box, which overflowed the frame and made the border underneath
-          look "inset" relative to the oversized photo. Background-size zooms
-          the image content without changing the element's box, so the clip
-          and the border stay in sync. */}
-      <div
-        role="img" aria-label="Kate Mezger"
-        style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: 'url(/images/kate.jpg)',
-          backgroundSize: '145%',
-          backgroundPosition: 'center 20%',
-          backgroundRepeat: 'no-repeat',
-          clipPath: 'url(#about-blob-clip)',
-        }}
-      />
-      {/* Blob border overlay. preserveAspectRatio="none" so it stretches to
-          match the box exactly, same as the clip-path (objectBoundingBox
-          scales non-uniformly too) — otherwise the default "meet" behavior
-          shrinks the outline to fit inside the box, leaving it visibly
-          inset instead of tracing the photo's actual edge. */}
-      <svg viewBox="0 0 400 510" preserveAspectRatio="none"
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
-        xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d={ABOUT_BLOB} fill="none" stroke="rgba(240,237,230,0.22)" strokeWidth="2" />
-      </svg>
-    </div>
-  )
-}
-
-/* ─── portal ──────────────────────────────────── */
-function Portal({ items, onExplore, size = 300 }) {
-  const [idx, setIdx] = useState(0)
-  const advance = () => setIdx(i => (i + 1) % items.length)
-  useEffect(() => { const t = setInterval(advance, 3200); return () => clearInterval(t) }, [])
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '28px 0 0' }}>
-      <div style={{ position: 'relative', width: size + 24, height: size + 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ position: 'absolute', width: size + 24, height: size + 24, borderRadius: '55% 45% 62% 38% / 48% 62% 38% 52%', border: '1px solid rgba(24,104,120,0.14)', animation: 'blobMorph 14s ease-in-out infinite' }} />
-        <div style={{ position: 'absolute', width: size + 12, height: size + 12, borderRadius: '52% 48% 58% 42% / 50% 58% 42% 50%', border: '1px solid rgba(10,48,32,0.17)', animation: 'blobMorph 12s ease-in-out infinite reverse' }} />
-        <div
-          onClick={advance}
-          style={{
-            width: size, height: size,
-            borderRadius: '58% 42% 55% 45% / 52% 58% 42% 48%',
-            animation: 'blobMorph 10s ease-in-out infinite',
-            overflow: 'hidden',
-            border: '2.5px solid #0A3020',
-            boxShadow: '0 0 0 3px rgba(24,104,120,0.22), inset 0 4px 28px rgba(0,0,0,0.2)',
-            position: 'relative', cursor: 'pointer', flexShrink: 0,
-          }}
-        >
-          {items.map((item, i) => (
-            <div key={item.id} style={{
-              position: 'absolute', inset: 0, background: item.bg,
-              opacity: i === idx ? 1 : 0, transition: 'opacity 1.1s ease',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6,
-            }}>
-              {item.img
-                ? <img src={item.img} alt={item.cat} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-                : (
-                  <div style={{
-                    fontFamily: "'Fraunces', serif", fontWeight: 400,
-                    fontSize: item.cat.length > 10 ? size * 0.115 : size * 0.22,
-                    lineHeight: 1.15, textAlign: 'center', padding: '0 22px',
-                    color: 'rgba(240,237,230,0.92)', textShadow: '0 2px 14px rgba(0,0,0,0.15)',
-                  }}>
-                    {item.cat}
-                  </div>
-                )
-              }
-            </div>
-          ))}
-          <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: 'radial-gradient(circle, transparent 38%, rgba(0,0,0,0.15) 100%)', pointerEvents: 'none' }} />
-        </div>
-        <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', color: '#186878', fontSize: 12, opacity: 0.65 }}>✦</div>
-      </div>
-
-      <div style={{ display: 'flex', gap: 6, marginTop: 14, alignItems: 'center' }}>
-        {items.map((_, i) => (
-          <div key={i} onClick={() => setIdx(i)} style={{
-            width: i === idx ? 20 : 6, height: 6, borderRadius: 3,
-            background: i === idx ? '#186878' : 'rgba(7,26,18,0.14)',
-            cursor: 'pointer', transition: 'all 0.35s ease',
-          }} />
-        ))}
-      </div>
-
-      <button onClick={onExplore} style={{
-        marginTop: 14, fontFamily: "'Cormorant Garamond', serif", fontWeight: 600,
-        fontSize: 12, letterSpacing: 3, textTransform: 'uppercase',
-        color: '#186878', background: 'none', border: 'none', cursor: 'pointer',
-      }}>
-        Explore All Work &nbsp;→
-      </button>
-    </div>
-  )
-}
-
-/* ─── card icon ───────────────────────────────── */
-function CardIcon({ type, color }) {
-  if (type === 0) return <svg width="24" height="24" viewBox="0 0 26 26" fill="none"><rect x="2" y="13" width="15.56" height="15.56" transform="rotate(-45 2 13)" stroke={color} strokeWidth="1.4"/></svg>
-  if (type === 1) return <svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="9" stroke={color} strokeWidth="1.4"/><circle cx="13" cy="13" r="4" fill={color} opacity="0.5"/></svg>
-  if (type === 2) return <svg width="24" height="24" viewBox="0 0 26 26" fill="none"><rect x="3" y="7" width="20" height="13" rx="1" stroke={color} strokeWidth="1.4"/><rect x="7" y="11" width="7" height="4" rx="0.5" fill={color} opacity="0.4"/></svg>
-  return <svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="7" cy="13" r="2.5" stroke={color} strokeWidth="1.4"/><circle cx="13" cy="13" r="2.5" stroke={color} strokeWidth="1.4"/><circle cx="19" cy="13" r="2.5" stroke={color} strokeWidth="1.4"/></svg>
-}
 
 /* ─── reveal hook ─────────────────────────────── */
 function useReveal(threshold = 0.1) {
@@ -326,218 +202,229 @@ function useReveal(threshold = 0.1) {
 export default function Home() {
   useDocumentTitle('Kate Mezger: Eden Portfolio')
   const navigate = useNavigate()
+  const location = useLocation()
   const scrollRef = useRef(null)
   const [ready, setReady]   = useState(false)
-  const [filter, setFilter] = useState('ALL')
-  const [discRef, discOn]   = useReveal(0.08)
   const [projRef, projOn]   = useReveal(0.08)
   const [aboutRef, aboutOn] = useReveal(0.08)
   const [toolRef, toolOn]   = useReveal(0.08)
+  const [moreRef, moreOn]   = useReveal(0.1)
+  const [heroPhoto, setHeroPhoto] = useState(0)
 
   useEffect(() => { const t = setTimeout(() => setReady(true), 80); return () => clearTimeout(t) }, [])
 
+  useEffect(() => {
+    const t = setInterval(() => setHeroPhoto(i => (i + 1) % HERO_PHOTOS.length), 5000)
+    return () => clearInterval(t)
+  }, [])
+
+  // LeftNav, when clicked from another page, navigates here and hands the
+  // target section id via router state (sections only exist on this page).
+  // Consume it once on mount, then clear it so a later refresh/back doesn't
+  // re-trigger the scroll.
+  useEffect(() => {
+    const target = location.state?.scrollTo
+    if (!target) return
+    const t = setTimeout(() => {
+      document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' })
+      navigate('.', { replace: true, state: {} })
+    }, 300)
+    return () => clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
   const scrollToTop = () => scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
-  const activeFn = FILTERS.find(f => f.label === filter)?.fn || (() => true)
-  const displayProjects = PROJECTS.filter(activeFn)
+  const featuredProjects = FEATURED_SLUGS.map(slug => PROJECTS.find(p => p.slug === slug)).filter(Boolean)
+  const moreProjects = PROJECTS.filter(p => !FEATURED_SLUGS.includes(p.slug))
 
   return (
-    <motion.div
+    <ScrollContainerContext.Provider value={scrollRef}>
+    <motion.main
       ref={scrollRef}
+      className="page-shell"
       initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 0.4 } }}
       exit={{ opacity: 0, transition: { duration: 0.2 } }}
-      style={{ height: '100vh', overflowY: 'auto', overflowX: 'hidden', background: '#F4F5F0', position: 'relative' }}
+      style={{ height: '100vh', overflowY: 'auto', overflowX: 'hidden', background: 'var(--bg)', position: 'relative' }}
     >
       <style>{`
-        /* ── Nav ────────────────────────── */
-        .nav {
-          position: sticky; top: 0; z-index: 100;
-          display: flex; align-items: center; justify-content: space-between;
-          padding: 13px 5vw;
-          background: rgba(180,185,168,0.96);
-          backdrop-filter: blur(10px);
-          border-bottom: 2px solid #186878;
-        }
-        .nav-logo { font-family: 'La Belle Aurore', cursive; font-weight: 400; font-size: 24px; color: #071A12; background: rgba(7,26,18,0.13); border-radius: 8px; padding: 6px 18px; cursor: pointer; border: none; transition: background 0.2s; }
-        .nav-logo:hover { background: rgba(7,26,18,0.2); }
-        .nav-links { display: flex; gap: 10px; }
-        .nav-btn { font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 17px; color: #071A12; background: rgba(7,26,18,0.12); border-radius: 8px; border: none; cursor: pointer; padding: 6px 20px; text-decoration: none; transition: background 0.2s; }
-        .nav-btn:hover { background: rgba(7,26,18,0.2); }
+        /* ── Page shell (leaves room for the fixed LeftNav rail) ── */
+        .page-shell { padding-left: ${LEFTNAV_WIDTH}px; }
+        @media (max-width: ${LEFTNAV_MOBILE_BP}px) { .page-shell { padding-left: 0; padding-top: 56px; } }
 
-        /* ── Hero ──────────────────────── */
-        .hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 56px 6vw 68px; position: relative; }
-        .hero-name { font-family: 'Fraunces', serif; font-weight: 400; color: #0A3020; font-size: clamp(50px, 9.5vw, 132px); letter-spacing: 0; line-height: 1; white-space: nowrap; opacity: 0; transform: translateY(20px); transition: opacity 0.65s ease 0.1s, transform 0.65s cubic-bezier(0.16,1,0.3,1) 0.1s; }
-        .hero-name.rdy { opacity: 1; transform: none; }
-        .hero-rule { width: 86%; max-width: 820px; height: 2px; background: #186878; margin: 18px auto 20px; opacity: 0; transition: opacity 0.5s ease 0.38s; }
-        .hero-rule.rdy { opacity: 1; }
-        .hero-sparkle { font-family: 'Stoke', serif; font-weight: 400; font-size: clamp(14px, 1.6vw, 19px); letter-spacing: 3px; text-transform: uppercase; color: #186878; display: flex; align-items: center; justify-content: center; gap: 14px; opacity: 0; transition: opacity 0.5s ease 0.5s; }
-        .hero-sparkle.rdy { opacity: 1; }
-        .hero-availability {
-          display: inline-flex; align-items: center; gap: 8px; margin-top: 18px;
-          font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 12px;
-          letter-spacing: 1.5px; text-transform: uppercase; color: #186878;
-          border: 1px solid rgba(24,104,120,0.3); border-radius: 20px; padding: 7px 16px;
-          opacity: 0; transition: opacity 0.5s ease 0.6s;
+        /* ── Hero — the "photo" (a placeholder fill for now) is the entire
+               full-screen section, edge to edge (aside from the nav rail's
+               reserved padding). The name/tagline sit on top of it, with a
+               vignette darkening the rim and pooling behind the text so
+               it stays readable once a real photo goes in. ── */
+        .hero {
+          position: relative; overflow: hidden; min-height: 100vh;
+          display: flex; align-items: flex-end;
+          background: #938573;
         }
-        .hero-availability.rdy { opacity: 1; }
-        .hero-availability-dot {
-          width: 7px; height: 7px; border-radius: 50%; background: #8DC4C0; flex-shrink: 0;
-          animation: pulseDot 2s ease-in-out infinite;
+        /* Cross-fading photo cycle filling the hero background — every
+           photo here actually has Kate in it. Sits behind the ::after
+           vignette (z-index 1) and .hero-inner text (z-index 2) so the
+           darkening/legibility treatment still applies on top of it. */
+        .hero-photo-cycle { position: absolute; inset: 0; z-index: 0; }
+        .hero-photo-cycle img {
+          position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+          opacity: 0; transition: opacity 1.4s ease;
+          filter: saturate(0.6) brightness(0.88) contrast(0.92);
         }
-        @keyframes pulseDot {
-          0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(141,196,192,0.5); }
-          50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(141,196,192,0); }
+        .hero-photo-cycle img.active { opacity: 1; }
+        .hero::after {
+          content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+          background:
+            linear-gradient(rgba(75,63,47,0.42), rgba(75,63,47,0.42)),
+            linear-gradient(to top, rgba(10,8,4,0.72) 0%, rgba(10,8,4,0.15) 45%, rgba(10,8,4,0) 70%),
+            radial-gradient(ellipse 70% 60% at 82% 88%, rgba(10,8,4,0.68) 0%, rgba(10,8,4,0) 70%),
+            radial-gradient(ellipse at center, rgba(10,8,4,0) 35%, rgba(10,8,4,0.5) 100%);
         }
-        .hero-gem { font-size: 16px; color: rgba(24,104,120,0.5); }
-        .hero-socials { display: flex; gap: 10px; justify-content: center; margin: 22px 0; opacity: 0; transition: opacity 0.5s ease 0.7s; }
-        .hero-socials.rdy { opacity: 1; }
-        .social-btn { width: 38px; height: 38px; border-radius: 9px; background: rgba(7,26,18,0.1); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #0A3020; text-decoration: none; transition: background 0.2s, color 0.2s, transform 0.2s; }
-        .social-btn:hover { background: #186878; color: #F0EDE6; transform: translateY(-2px); }
-        .hero-text { font-family: 'Caveat', cursive; font-weight: 400; font-size: clamp(19px, 2.1vw, 25px); color: rgba(7,26,18,0.58); line-height: 1.6; max-width: 520px; opacity: 0; transition: opacity 0.5s ease 0.85s; }
-        .hero-text.rdy { opacity: 1; }
-        .hero-vline { width: 2px; height: 64px; background: linear-gradient(180deg, #186878 0%, rgba(24,104,120,0) 100%); margin: 24px auto 0; opacity: 0; transition: opacity 0.5s ease 1s; }
-        .hero-vline.rdy { opacity: 1; }
+        .hero-inner {
+          position: relative; z-index: 2; width: 100%;
+          padding: 56px 7vw 56px;
+          opacity: 0; transform: translateY(14px);
+          transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16,1,0.3,1);
+        }
+        .hero-inner.rdy { opacity: 1; transform: none; }
+        @media (max-width: 680px) { .hero-inner { padding: 40px 6vw 40px; } }
+        .hero-name {
+          font-family: 'Fraunces', serif; font-weight: 700; color: #F5F1EA;
+          font-size: clamp(42px, 8vw, 104px); line-height: 0.98; letter-spacing: -1px;
+          text-align: right; margin-bottom: 20px;
+          text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+        }
+        .hero-tagline {
+          font-family: 'Fraunces', serif; font-weight: 600; font-style: italic; color: #EBE5D8;
+          font-size: clamp(15px, 1.7vw, 20px); margin-top: 6px; text-align: right;
+          text-shadow: 0 1px 10px rgba(0,0,0,0.35);
+        }
+        .hero-socials { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+        .social-btn { width: 34px; height: 34px; border-radius: 8px; background: rgba(232,225,214,0.16); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #E8E1D6; text-decoration: none; transition: background 0.2s, color 0.2s, transform 0.2s; }
+        .social-btn:hover { background: var(--terra-fill); color: #E8E1D6; transform: translateY(-2px); }
 
         /* ── Marquee ────────────────────── */
-        .marquee-wrap { background: #0A3020; overflow: hidden; padding: 13px 0; }
-        .marquee-track { display: inline-flex; white-space: nowrap; animation: marqueeScroll 24s linear infinite; }
-        .marquee-item { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 14px; letter-spacing: 4px; text-transform: uppercase; color: rgba(240,237,230,0.6); padding: 0 28px; display: inline-flex; align-items: center; gap: 28px; }
-        .marquee-gem { color: rgba(141,196,192,0.55); font-size: 12px; }
-
         /* ── Section bar ────────────────── */
-        .sec-bar { background: #0A3020; display: flex; align-items: center; justify-content: space-between; padding: 15px 6vw; font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: rgba(240,237,230,0.5); border-top: 1px solid rgba(240,237,230,0.07); }
-        .sec-bar-num { color: rgba(141,196,192,0.8); }
-        .sec-bar-star { color: rgba(240,237,230,0.25); font-size: 14px; }
+        .sec-bar { background: var(--forest-fill); display: flex; align-items: center; justify-content: space-between; padding: 15px 6vw; font-family: 'Quicksand', sans-serif; font-weight: 500; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: rgba(232,225,214,0.72); border-top: 1px solid rgba(232,225,214,0.07); }
+        .sec-bar-num { color: rgba(232,225,214,0.72); }
+        .sec-bar-star { color: rgba(232,225,214,0.25); font-size: 14px; }
 
         /* ── Section heading ────────────── */
-        .sec-eyebrow { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: rgba(7,26,18,0.38); margin-bottom: 10px; }
-        .sec-heading { font-family: 'Cormorant Garamond', serif; line-height: 0.9; letter-spacing: -1px; margin-bottom: 44px; }
-        .sec-heading .h1 { display: block; color: #071A12; font-family: 'Fraunces', serif; font-weight: 400; font-size: clamp(42px, 6vw, 82px); }
-        .sec-heading .h2 { display: block; color: #186878; font-family: 'Stoke', serif; font-weight: 400; font-size: clamp(42px, 6vw, 82px); }
+        .sec-eyebrow { font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: rgba(var(--ink-rgb),0.58); margin-bottom: 10px; }
+        .sec-heading { font-family: 'Quicksand', sans-serif; line-height: 0.9; letter-spacing: -1px; margin-bottom: 44px; }
+        .sec-heading .h1 { display: block; color: var(--ink); font-family: 'Fraunces', serif; font-weight: 400; font-size: clamp(42px, 6vw, 82px); }
+        .sec-heading .h2 { display: block; color: var(--terra); font-family: 'Stoke', serif; font-weight: 400; font-size: clamp(42px, 6vw, 82px); }
 
-        /* ── Disciplines ────────────────── */
-        .disc-wrap { padding: 58px 6vw 62px; }
-        .disc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; }
-        @media (max-width: 680px) { .disc-grid { grid-template-columns: 1fr; } }
-
-        .disc-card {
-          padding: 38px 34px 34px; min-height: 250px; display: flex; flex-direction: column;
-          cursor: pointer; position: relative;
-          outline: 2px solid transparent;
-          transition:
-            box-shadow 0.7s ease,
-            transform 0.7s ease,
-            outline-color 0.7s ease;
-        }
-        .disc-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 0 60px rgba(24,104,120,0.22), 0 16px 40px rgba(0,0,0,0.2);
-          outline-color: rgba(141,196,192,0.35);
-          z-index: 2;
+        /* ── Work — a dense card grid (not giant alternating rows with huge
+               gaps), plus a "More Work" row of compact thumbnail cards
+               underneath. Packed closer to how real portfolio grids read:
+               several cards visible at once, tight gaps, no empty CTA
+               buttons eating space. ── */
+        .proj-wrap { padding: 52px 6vw 8px; }
+        .proj-empty { font-family: 'Quicksand', sans-serif; font-size: 16px; color: rgba(var(--ink-rgb),0.58); letter-spacing: 2px; padding: 40px 0; text-align: center; }
+        .more-work-wrap { padding: 28px 6vw 56px; }
+        .more-work-label {
+          font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 11px;
+          letter-spacing: 3px; text-transform: uppercase; color: rgba(var(--ink-rgb),0.58);
+          margin-bottom: 16px;
         }
 
-        .disc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
-        .disc-num { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 11px; letter-spacing: 2px; }
-        .disc-title { font-family: 'Stoke', serif; font-weight: 400; font-size: clamp(22px, 2.6vw, 37px); line-height: 1.1; letter-spacing: 0; margin-bottom: 10px; }
-        .disc-desc { font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 15px; line-height: 1.7; flex: 1; margin-bottom: 18px; }
-        .disc-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: auto; }
-        .disc-tag { font-family: 'Cormorant Garamond', serif; font-size: 11px; font-weight: 500; padding: 3px 10px; border: 1px solid; letter-spacing: 0.3px; }
-
-        /* ── Wave ──────────────────────── */
-        .wave-wrap { line-height: 0; margin-top: 40px; }
-        .wave-wrap svg { display: block; width: 100%; }
-
-        /* ── Projects ───────────────────── */
-        .proj-wrap { padding: 58px 6vw 64px; }
-        .filter-row { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 34px; }
-        .ftab { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 7px 16px; border: 1.5px solid rgba(7,26,18,0.16); background: none; color: rgba(7,26,18,0.45); cursor: pointer; transition: all 0.2s; }
-        .ftab.active { background: #071A12; color: #F0EDE6; border-color: #071A12; }
-        .ftab:hover:not(.active) { border-color: rgba(7,26,18,0.38); color: #071A12; }
-        .proj-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-        @media (max-width: 900px) { .proj-grid { grid-template-columns: repeat(2, 1fr); } }
+        /* Featured — responsive card grid */
+        /* Fixed 3 columns (6 featured projects = 2 rows of 3), not auto-fit —
+           guarantees the row count regardless of viewport width. */
+        .proj-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+        @media (max-width: 980px) { .proj-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .proj-grid { grid-template-columns: 1fr; } }
-        .proj-empty { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: rgba(7,26,18,0.3); letter-spacing: 2px; padding: 40px 0; text-align: center; grid-column: 1/-1; }
+        .proj-card { cursor: pointer; display: flex; flex-direction: column; }
+        .proj-card-img {
+          aspect-ratio: 4/3; background: rgba(var(--ink-rgb),0.055); position: relative; overflow: hidden;
+          border-radius: 6px; margin-bottom: 13px;
+          box-shadow: 0 3px 14px rgba(0,0,0,0.34);
+          transition: transform 0.22s ease, box-shadow 0.22s ease;
+        }
+        .proj-card:hover .proj-card-img { transform: translateY(-5px); box-shadow: 0 16px 32px rgba(var(--terra-rgb),0.24); }
+        /* White behind project images so transparent PNG/SVG art doesn't sit
+           on the dark page. Set on the img, not the frame, so cards with no
+           image keep their placeholder label readable. */
+        .proj-card-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #fff; }
+        .more-work-thumb img { background: #fff; }
+        .proj-img-label { font-family: 'Quicksand', sans-serif; font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(var(--ink-rgb),0.56); }
+        .proj-card-cats { position: absolute; top: 10px; left: 10px; right: 48px; display: flex; flex-wrap: wrap; gap: 4px; }
+        .proj-card-cat { font-family: 'Quicksand', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: #E8E1D6; padding: 4px 10px; border-radius: 3px; }
+        .proj-card-yr  { position: absolute; top: 10px; right: 10px; font-family: 'Quicksand', sans-serif; font-size: 11px; color: rgba(232,225,214,0.75); text-shadow: 0 1px 4px rgba(0,0,0,0.35); }
+        .proj-card-eyebrow { display: flex; align-items: center; gap: 6px; font-family: 'Quicksand', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+        .proj-title { font-family: 'Stoke', serif; font-weight: 400; font-size: 21px; color: var(--ink); line-height: 1.2; transition: color 0.2s; margin-bottom: 6px; }
+        .proj-card:hover .proj-title { color: var(--terra); }
+        .proj-desc  {
+          font-family: 'Quicksand', sans-serif; font-size: 14px; color: rgba(var(--ink-rgb),0.6); line-height: 1.55; margin-bottom: 10px;
+          display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .proj-tags  { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+        .proj-tag   { font-family: 'Quicksand', sans-serif; font-size: 10.5px; font-weight: 500; padding: 3px 9px; border: 1px solid rgba(var(--ink-rgb),0.14); color: rgba(var(--ink-rgb),0.58); }
+        .proj-card-link {
+          font-family: 'Quicksand', sans-serif; font-size: 12px; font-weight: 700;
+          letter-spacing: 1px; text-transform: uppercase; color: var(--terra); margin-top: auto;
+        }
 
-        /* ── Full index — a fast, scannable list of every project ── */
-        .proj-index { margin-top: 56px; border-top: 1px solid rgba(7,26,18,0.1); }
-        .proj-index-label { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 11px;
-          letter-spacing: 3px; text-transform: uppercase; color: rgba(7,26,18,0.36); margin: 26px 0 4px; }
-        .proj-index-row {
-          display: flex; align-items: baseline; gap: 18px; padding: 16px 0;
-          border-bottom: 1px solid rgba(7,26,18,0.1); cursor: pointer;
+        /* More Work — compact thumbnail + text rows, denser than plain text */
+        .more-work-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+        .more-work-item {
+          display: flex; align-items: center; gap: 13px; cursor: pointer;
+          padding: 9px; border-radius: 6px; transition: background 0.2s;
         }
-        .proj-index-title { font-family: 'Stoke', serif; font-size: 19px; color: #071A12; transition: color 0.2s; white-space: nowrap; }
-        .proj-index-row:hover .proj-index-title { color: #186878; }
-        .proj-index-meta { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: rgba(7,26,18,0.42); flex: 1; }
-        .proj-index-arrow { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: rgba(7,26,18,0.3);
-          transition: transform 0.2s ease, color 0.2s ease; }
-        .proj-index-row:hover .proj-index-arrow { color: #186878; transform: translateX(4px); }
-        @media (max-width: 620px) {
-          .proj-index-row { flex-wrap: wrap; }
-          .proj-index-meta { flex-basis: 100%; order: 3; }
+        .more-work-item:hover { background: rgba(var(--ink-rgb),0.05); }
+        .more-work-thumb {
+          flex-shrink: 0; width: 60px; height: 60px; border-radius: 5px; overflow: hidden;
+          background: rgba(var(--ink-rgb),0.08); position: relative;
+          display: flex; align-items: center; justify-content: center;
         }
-        .proj-card { cursor: pointer; }
-        .proj-card:hover .proj-title { color: #186878; }
-        .proj-img { aspect-ratio: 4/3; background: rgba(7,26,18,0.055); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; border-radius: 4px;
-          box-shadow: none;
-          transition: box-shadow 0.9s ease; }
-        .proj-card:hover .proj-img {
-          box-shadow:
-            0 0 28px rgba(212,184,128,0.22),
-            0 0 58px rgba(212,184,128,0.10),
-            inset 0 0 24px rgba(212,184,128,0.07);
-        }
-        .proj-img-label { font-family: 'Cormorant Garamond', serif; font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(7,26,18,0.18); }
-        .proj-cat { position: absolute; top: 10px; left: 10px; font-family: 'Cormorant Garamond', serif; font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: #F0EDE6; padding: 4px 10px; }
-        .proj-yr  { position: absolute; top: 10px; right: 10px; font-family: 'Cormorant Garamond', serif; font-size: 11px; color: rgba(240,237,230,0.65); }
-        .proj-title { font-family: 'Stoke', serif; font-weight: 400; font-size: 19px; color: #071A12; margin-bottom: 6px; line-height: 1.2; transition: color 0.2s; }
-        .proj-desc  { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: rgba(7,26,18,0.48); line-height: 1.6; margin-bottom: 10px; }
-        .proj-tags  { display: flex; flex-wrap: wrap; gap: 5px; }
-        .proj-tag   { font-family: 'Cormorant Garamond', serif; font-size: 11px; font-weight: 500; padding: 3px 10px; border: 1px solid rgba(7,26,18,0.14); color: rgba(7,26,18,0.45); }
+        .more-work-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .more-work-info { min-width: 0; }
+        .more-work-title { font-family: 'Stoke', serif; font-size: 15px; color: var(--ink); transition: color 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .more-work-item:hover .more-work-title { color: var(--terra); }
+        .more-work-meta { font-family: 'Quicksand', sans-serif; font-size: 12px; color: rgba(var(--ink-rgb),0.58); margin-top: 2px; }
 
         /* ── About ─────────────────────── */
-        .about-wrap { background: #0A3020; padding: 64px 6vw; }
+        .about-wrap { background: var(--forest-fill); padding: 64px 6vw; }
         .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: start; }
         @media (max-width: 760px) { .about-grid { grid-template-columns: 1fr; } }
-        .about-eyebrow { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: rgba(240,237,230,0.35); margin-bottom: 11px; }
-        .about-heading { font-family: 'Cormorant Garamond', serif; line-height: 0.95; letter-spacing: -1px; margin-bottom: 22px; }
-        .about-heading .al { display: block; color: #F0EDE6; font-family: 'Fraunces', serif; font-weight: 400; font-size: clamp(34px, 5vw, 60px); }
-        .about-heading .ab { display: block; color: #8DC4C0; font-family: 'Stoke', serif; font-weight: 400; font-size: clamp(34px, 5vw, 60px); }
-        .about-bio { font-family: 'Cormorant Garamond', serif; font-size: 17px; color: rgba(240,237,230,0.62); line-height: 1.78; margin-bottom: 26px; }
+        .about-eyebrow { font-family: 'Quicksand', sans-serif; font-weight: 500; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: rgba(232,225,214,0.7); margin-bottom: 11px; }
+        .about-heading { font-family: 'Quicksand', sans-serif; line-height: 0.95; letter-spacing: -1px; margin-bottom: 22px; }
+        .about-heading .al { display: block; color: #E8E1D6; font-family: 'Fraunces', serif; font-weight: 400; font-size: clamp(34px, 5vw, 60px); }
+        .about-heading .ab { display: block; color: var(--stone); font-family: 'Stoke', serif; font-weight: 400; font-size: clamp(34px, 5vw, 60px); }
+        .about-bio { font-family: 'Quicksand', sans-serif; font-size: 17px; color: rgba(232,225,214,0.74); line-height: 1.78; margin-bottom: 26px; }
         .about-links { display: flex; gap: 9px; flex-wrap: wrap; }
-        .about-lnk { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: rgba(240,237,230,0.5); text-decoration: none; border: 1px solid rgba(240,237,230,0.18); padding: 8px 16px; transition: all 0.2s; }
-        .about-lnk:hover { color: #F0EDE6; border-color: rgba(240,237,230,0.45); }
-        .about-photo-label { font-family: 'Cormorant Garamond', serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: rgba(240,237,230,0.18); }
+        .about-lnk { font-family: 'Quicksand', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: rgba(232,225,214,0.72); text-decoration: none; border: 1px solid rgba(232,225,214,0.18); padding: 8px 16px; transition: all 0.2s; }
+        .about-lnk:hover { color: #E8E1D6; border-color: rgba(232,225,214,0.45); }
+        .about-photo-label { font-family: 'Quicksand', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: rgba(232,225,214,0.7); }
 
-        /* ── Toolkit ────────────────────── */
-        .toolkit-wrap { padding: 64px 6vw 68px; }
-        .skill-pills { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 42px; }
-        .skill-pill { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-weight: 600; padding: 7px 18px; border: 1.5px solid rgba(7,26,18,0.16); color: #071A12; cursor: default; transition: all 0.2s; }
-        .skill-pill:hover { background: #071A12; color: #F0EDE6; }
-        .tool-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
-        @media (max-width: 760px) { .tool-grid { grid-template-columns: repeat(2, 1fr); } }
-        .tool-label { font-family: 'Cormorant Garamond', serif; font-size: 10px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: rgba(7,26,18,0.32); margin-bottom: 13px; padding-bottom: 8px; border-bottom: 1px solid rgba(7,26,18,0.09); }
-        .tool-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-        .tool-item { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: rgba(7,26,18,0.62); display: flex; align-items: center; gap: 9px; }
-        .tool-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(24,104,120,0.45); flex-shrink: 0; }
-
-        /* ── Divider ────────────────────── */
-        .mimzy-div { display: flex; align-items: center; gap: 16px; padding: 0 6vw; margin: 6px 0 0; }
-        .mimzy-line { flex: 1; height: 1px; background: rgba(7,26,18,0.1); }
-        .mimzy-gems { font-family: 'Cormorant Garamond', serif; font-size: 11px; letter-spacing: 8px; color: rgba(7,26,18,0.22); }
+        /* ── Toolkit — plain text, no pill cloud or boxed grid ── */
+        .toolkit-wrap { padding: 44px 6vw 56px; border-top: 1px solid rgba(var(--ink-rgb),0.08); }
+        .toolkit-line { font-family: 'Quicksand', sans-serif; font-size: 15px; line-height: 1.9; color: rgba(var(--ink-rgb),0.6); max-width: 820px; margin-bottom: 6px; }
+        .toolkit-line b { color: var(--ink); font-weight: 600; }
 
         /* ── Footer ─────────────────────── */
-        .footer { background: #071A12; padding: 40px 6vw; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; border-top: 1px solid rgba(240,237,230,0.05); }
-        .footer-logo { font-family: 'La Belle Aurore', cursive; font-weight: 400; font-size: 28px; color: rgba(240,237,230,0.55); }
-        .footer-logo em { color: #8DC4C0; font-style: normal; }
+        .footer { background: var(--footer-bg); padding: 40px 6vw; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; border-top: 1px solid rgba(232,225,214,0.05); }
+        .footer-logo { font-family: 'La Belle Aurore', cursive; font-weight: 400; font-size: 28px; color: rgba(232,225,214,0.62); }
+        .footer-logo em { color: var(--stone); font-style: normal; }
         .footer-links { display: flex; gap: 18px; flex-wrap: wrap; }
-        .footer-lnk { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: rgba(240,237,230,0.28); text-decoration: none; background: none; border: none; cursor: pointer; padding: 0; transition: color 0.2s; }
-        .footer-lnk:hover { color: rgba(240,237,230,0.65); }
-        .footer-copy { font-family: 'Cormorant Garamond', serif; font-size: 11px; color: rgba(240,237,230,0.14); }
+        .footer-lnk { font-family: 'Quicksand', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: rgba(232,225,214,0.6); text-decoration: none; background: none; border: none; cursor: pointer; padding: 0; transition: color 0.2s; }
+        .footer-lnk:hover { color: rgba(232,225,214,0.88); }
+        .footer-copy { font-family: 'Quicksand', sans-serif; font-size: 11px; color: rgba(232,225,214,0.56); }
 
         /* ── Reveal ─────────────────────── */
-        .rv { opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1); }
+        .rv { opacity: 0; transform: translate(var(--rx, 0px), var(--ry, 14px)); transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1); }
         .rv.on { opacity: 1; transform: none; }
+        /* Sideways entrances: set --rx (and --ry: 0) on an .rv element to
+           have it slide in horizontally instead of rising. */
+        .from-left  { --rx: -56px; --ry: 0px; }
+        .from-right { --rx: 56px;  --ry: 0px; }
+        .toolkit-line { opacity: 0; transform: translateX(-36px);
+          transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.16,1,0.3,1); }
+        .toolkit-wrap.on .toolkit-line { opacity: 1; transform: none; }
+        .more-work-item.rv { --rx: -36px; --ry: 0px;
+          transition: opacity 0.5s ease var(--d, 0ms), transform 0.6s cubic-bezier(0.16,1,0.3,1) var(--d, 0ms), background 0.2s; }
         .rv.d1 { transition-delay: 0ms; }
         .rv.d2 { transition-delay: 80ms; }
         .rv.d3 { transition-delay: 160ms; }
@@ -559,191 +446,110 @@ export default function Home() {
         /* ── About photo blob ────────────*/
         .about-photo {
           aspect-ratio: 4/5;
-          background: rgba(240,237,230,0.07);
+          background: rgba(232,225,214,0.07);
           display: flex; align-items: center; justify-content: center;
           position: relative; overflow: visible;
           border: none;
         }
       `}</style>
 
-      <ScatteredSymbols />
-
-      {/* ── NAV ─────────────────────────── */}
-      <nav className="nav">
-        <button className="nav-logo" onClick={scrollToTop}>Eden</button>
-        <div className="nav-links">
-          <button className="nav-btn" onClick={() => scrollTo('disc-section')}>works</button>
-          <button className="nav-btn" onClick={() => scrollTo('about-section')}>about</button>
-        </div>
-      </nav>
+      <LeftNav />
 
       {/* ── HERO ────────────────────────── */}
       <section className="hero">
-        <h1 className={`hero-name${ready ? ' rdy' : ''}`} style={{ position: 'relative', zIndex: 1 }}>Kate Mezger</h1>
-        <div className={`hero-rule${ready ? ' rdy' : ''}`} />
-        <div className={`hero-sparkle${ready ? ' rdy' : ''}`}>
-          <span className="hero-gem">✦</span>
-          UX/UI &nbsp;|&nbsp; HCI &nbsp;|&nbsp; ML/AI
-          <span className="hero-gem">✦</span>
-        </div>
-
-        <div className={`hero-availability${ready ? ' rdy' : ''}`}>
-          <span className="hero-availability-dot" />
-          Open to Summer 2027 Internships
-        </div>
-
-        <Portal items={PORTAL_ITEMS} onExplore={() => scrollTo('disc-section')} size={280} />
-
-        <div className={`hero-socials${ready ? ' rdy' : ''}`}>
-          {SOCIALS.map(s => (
-            <a key={s.label} href={s.href} className="social-btn"
-              target={s.href.startsWith('http') ? '_blank' : undefined}
-              rel="noopener noreferrer" title={s.label}>
-              {s.icon}
-            </a>
+        <div className="hero-photo-cycle">
+          {HERO_PHOTOS.map((src, i) => (
+            <img key={src} src={src} alt="" className={i === heroPhoto ? 'active' : ''} />
           ))}
         </div>
-        <p className={`hero-text${ready ? ' rdy' : ''}`}>
-          Hello! My name is Kate but you can also call me Eden :)<br />
-          Came to take a look at my stuff? Feel free to scroll to adventure around my portfolio....
-        </p>
-        <div className={`hero-vline${ready ? ' rdy' : ''}`} />
+        <div className={`hero-inner${ready ? ' rdy' : ''}`}>
+          <h1 className="hero-name">Kate Mezger</h1>
+          <p className="hero-tagline">UX/UI Designer, Researcher &amp; Programmer</p>
+          <div className="hero-socials">
+            {SOCIALS.map(s => (
+              <a key={s.label} href={s.href} className="social-btn"
+                target={s.href.startsWith('http') ? '_blank' : undefined}
+                rel="noopener noreferrer" title={s.label}>
+                {s.icon}
+              </a>
+            ))}
+          </div>
+        </div>
       </section>
-
-      {/* ── MARQUEE ─────────────────────── */}
-      <div className="marquee-wrap">
-        <div className="marquee-track">
-          {[...MARQUEE, ...MARQUEE].map((item, i) => (
-            <span key={i} className="marquee-item">
-              {item}
-              {i % 3 === 2 && <span className="marquee-gem">✦</span>}
-            </span>
-          ))}
-        </div>
-      </div>
 
       {/* ── SECTION BAR 01 ──────────────── */}
-      <div className="sec-bar" id="disc-section">
-        <span className="sec-bar-num">01</span>
-        <span>Disciplines</span>
-        <span className="sec-bar-star">✦</span>
-      </div>
-
-      {/* ── DISCIPLINES ─────────────────── */}
-      <section className="disc-wrap">
-        <p className="sec-eyebrow">What I Do</p>
-        <div className="sec-heading">
-          <span className="h1"><RevealText text="My" /></span>
-          <span className="h2"><RevealText text="Disciplines" /></span>
-        </div>
-        <div className="disc-grid" ref={discRef}>
-          {DISCIPLINES.map((d, i) => (
-            <div key={d.num} className={`disc-card rv${discOn ? ' on' : ''} d${i + 1}`}
-              style={{ background: d.bg }} onClick={() => navigate(`/${d.page}`)}
-              role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && navigate(`/${d.page}`)}>
-              <div className="disc-top">
-                <CardIcon type={i} color={d.iconDim} />
-                <span className="disc-num" style={{ color: d.iconDim }}>{d.num}</span>
-              </div>
-              <div className="disc-title" style={{ color: d.fg }}>{d.title}</div>
-              <div className="disc-desc" style={{ color: d.fg === '#F0EDE6' ? 'rgba(240,237,230,0.7)' : 'rgba(7,26,18,0.58)' }}>{d.desc}</div>
-              <div className="disc-tags">
-                {d.tools.map(t => (
-                  <span key={t} className="disc-tag" style={{ color: d.fg === '#F0EDE6' ? 'rgba(240,237,230,0.65)' : 'rgba(7,26,18,0.48)', borderColor: d.fg === '#F0EDE6' ? 'rgba(240,237,230,0.18)' : 'rgba(7,26,18,0.14)' }}>{t}</span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── WAVE ────────────────────────── */}
-      <div className="wave-wrap">
-        <svg viewBox="0 0 1440 88" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0,44 C180,88 360,0 540,44 C720,88 900,0 1080,44 C1260,88 1350,22 1440,44 L1440,88 L0,88 Z" fill="#0A3020"/>
-        </svg>
-      </div>
-
-      {/* ── SECTION BAR 02 ──────────────── */}
       <div className="sec-bar" id="work-section">
-        <span className="sec-bar-num">02</span>
+        <span className="sec-bar-num">01</span>
         <span>Selected Work</span>
         <span className="sec-bar-star">✦</span>
       </div>
 
-      {/* ── PROJECTS ────────────────────── */}
+      {/* ── WORK — a small curated "Featured" set, no filter tabs ────── */}
       <section className="proj-wrap">
-        <p className="sec-eyebrow">Selected Work</p>
+        <p className="sec-eyebrow">Featured</p>
         <div className="sec-heading">
-          <span className="h1"><RevealText text="The" /></span>
-          <span className="h2"><RevealText text="Projects" /></span>
-        </div>
-        <div className="filter-row">
-          {FILTERS.map(f => (
-            <button key={f.label} className={`ftab${filter === f.label ? ' active' : ''}`} onClick={() => setFilter(f.label)}>
-              {f.label}
-            </button>
-          ))}
+          <Drift className="h1" from={-70} to={70}><RevealText text="The" /></Drift>
+          <Drift className="h2" from={70} to={-70}><RevealText text="Projects" /></Drift>
         </div>
         <div className="proj-grid" ref={projRef}>
-          {displayProjects.length === 0
-            ? <div className="proj-empty">No projects in this category yet.</div>
-            : displayProjects.map((p, i) => (
-              <div key={p.id} className={`rv${projOn ? ' on' : ''} d${Math.min(i + 1, 4)}`}>
-                <TiltCard
-                  className="proj-card"
-                  onClick={() => navigate(`/project/${p.slug}`)}
-                  role="button" tabIndex={0}
-                  onKeyDown={e => e.key === 'Enter' && navigate(`/project/${p.slug}`)}>
-                  <div className="proj-img">
-                    {p.img
-                      ? <img src={p.img} alt={p.title} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-                      : <span className="proj-img-label">Add Image</span>
-                    }
-                    <span className="proj-cat" style={{ background: p.catBg }}>{p.cat}</span>
-                    <span className="proj-yr">{p.year}</span>
+          {featuredProjects.length === 0
+            ? <div className="proj-empty">No projects yet.</div>
+            : featuredProjects.map((p, i) => (
+              <div
+                key={p.id}
+                className={`proj-card rv${projOn ? ' on' : ''} d${Math.min(i + 1, 4)}${i % 3 === 0 ? ' from-left' : i % 3 === 2 ? ' from-right' : ''}`}
+                onClick={() => navigate(`/project/${p.slug}`)}
+                role="button" tabIndex={0}
+                onKeyDown={e => e.key === 'Enter' && navigate(`/project/${p.slug}`)}>
+                <div className="proj-card-img">
+                  {p.img
+                    ? <img src={p.img} alt={p.title} />
+                    : <span className="proj-img-label">{p.imgNote || 'Add Image'}</span>
+                  }
+                  <div className="proj-card-cats">
+                    {p.cats.map(c => <span key={c} className="proj-card-cat" style={{ background: CATEGORY_FILLS[c] }}>{c}</span>)}
                   </div>
-                  <div className="proj-title">
-                    {PROJECT_MOTIFS[p.slug] && (
-                      <span style={{ display: 'inline-flex', verticalAlign: -3, marginRight: 7 }}>
-                        <MotifIcon name={PROJECT_MOTIFS[p.slug]} color={p.catBg} size={16} />
-                      </span>
-                    )}
-                    {p.title}
-                  </div>
-                  <div className="proj-desc">{p.desc}</div>
-                  <div className="proj-tags">{p.tags.map(t => <span key={t} className="proj-tag">{t}</span>)}</div>
-                </TiltCard>
+                  <span className="proj-card-yr">{p.year}</span>
+                </div>
+                <div className="proj-card-eyebrow" style={{ color: CATEGORY_COLORS[p.cats[0]] }}>
+                  {PROJECT_MOTIFS[p.slug] && <MotifIcon name={PROJECT_MOTIFS[p.slug]} color={CATEGORY_COLORS[p.cats[0]]} size={13} />}
+                  {p.cats.join(' · ')} · {p.year}
+                </div>
+                <div className="proj-title">{p.title}</div>
+                <p className="proj-desc">{p.desc}</p>
+                <div className="proj-tags">{p.tags.map(t => <span key={t} className="proj-tag">{t}</span>)}</div>
+                <span className="proj-card-link">View Project →</span>
               </div>
             ))
           }
         </div>
+      </section>
 
-        {/* Full index — every project, one line each, for a fast scan
-            regardless of the filter tabs above. */}
-        <div className="proj-index">
-          <p className="proj-index-label">Full Index</p>
-          {PROJECTS.map(p => (
-            <div key={p.id} className="proj-index-row" onClick={() => navigate(`/project/${p.slug}`)}
+      {/* ── MORE WORK — compact thumbnail cards, denser than plain text ── */}
+      <section className="more-work-wrap" ref={moreRef}>
+        <p className="more-work-label">More Work</p>
+        <div className="more-work-grid">
+          {moreProjects.map((p, i) => (
+            <div key={p.id} className={`more-work-item rv${moreOn ? ' on' : ''}`} style={{ '--d': `${i * 70}ms` }} onClick={() => navigate(`/project/${p.slug}`)}
               role="button" tabIndex={0} onKeyDown={e => e.key === 'Enter' && navigate(`/project/${p.slug}`)}>
-              <span className="proj-index-title">{p.title}</span>
-              <span className="proj-index-meta">{p.cat} · {p.year}</span>
-              <span className="proj-index-arrow">→</span>
+              <div className="more-work-thumb">
+                {p.img
+                  ? <img src={p.img} alt={p.title} />
+                  : <MotifIcon name={PROJECT_MOTIFS[p.slug]} color={CATEGORY_COLORS[p.cats[0]]} size={22} />
+                }
+              </div>
+              <div className="more-work-info">
+                <div className="more-work-title">{p.title}</div>
+                <div className="more-work-meta">{p.cats.join(' · ')} · {p.year}</div>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ── DIVIDER ─────────────────────── */}
-      <div className="mimzy-div">
-        <div className="mimzy-line" />
-        <span className="mimzy-gems">✦ ✦ ✦</span>
-        <div className="mimzy-line" />
-      </div>
-
-      {/* ── SECTION BAR 03 ──────────────── */}
+      {/* ── SECTION BAR 02 ──────────────── */}
       <div className="sec-bar" id="about-section">
-        <span className="sec-bar-num">03</span>
+        <span className="sec-bar-num">02</span>
         <span>The Person</span>
         <span className="sec-bar-star">✦</span>
       </div>
@@ -751,16 +557,16 @@ export default function Home() {
       {/* ── ABOUT ───────────────────────── */}
       <section className="about-wrap" ref={aboutRef}>
         <div className="about-grid">
-          <div className={`rv${aboutOn ? ' on' : ''} d1`}>
+          <div className={`rv${aboutOn ? ' on' : ''} d1 from-left`}>
             <p className="about-eyebrow">About Me</p>
             <div className="about-heading">
-              <span className="al"><RevealText text="Curious by" /></span>
-              <span className="ab"><RevealText text="design." /></span>
+              <Drift className="al" from={50} to={-50}><RevealText text="Curious by" /></Drift>
+              <Drift className="ab" from={-50} to={70}><RevealText text="design." /></Drift>
             </div>
             <p className="about-bio">
               I'm Kate, a multi-disciplinary designer and developer. I've always been drawn to the edges where disciplines overlap: the moment a game's design breaks down into a piece of UX beauty, or a data visualisation becomes a piece of art.<br /><br />
-              I'm going into my third year at UT Dallas as a Cognitive Science major, concentrating in AI/Computation and HCI, and I'm working through a data science certification alongside it.<br /><br />
-              On campus I'm part of AIS, where I started as a mentee in Spring 2026 and joined the tech team as of Summer 2026, and I also work with the Nebula Labs product team. Outside of school I work part time as a Game Master at Red Door Escape Room, something I've been doing for just over a year now.
+              I'm a Cognitive Science major at UT Dallas, concentrating in AI/Computation and HCI, and I'm working through a data science certification alongside it. Right now I'm an Application Developer Intern at Cooperative Processing Resources, shipping frontend features for Cloverleaf CMS, and I'm the Technology Designer and Officer for the Artificial Intelligence Society, leading web development and product design across the org's platforms.<br /><br />
+              Before that, I did UX research with the Nebula Labs product team, co-moderating focus groups and user interviews across three student platforms, and spent over a year as a Game Master at Red Door Escape Room.
             </p>
             <div className="about-links">
               <a href="mailto:kate.mezger22@gmail.com" className="about-lnk">Email</a>
@@ -769,39 +575,33 @@ export default function Home() {
               <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="about-lnk">Resume</a>
             </div>
           </div>
-          <div className={`rv${aboutOn ? ' on' : ''} d2`} style={{ width: '100%', maxWidth: 400, marginInline: 'auto', marginTop: 60, position: 'relative', left: 12 }}>
-            <BlobPhotoFrame />
+          <div className={`rv${aboutOn ? ' on' : ''} d2 from-right`} style={{ width: '100%', maxWidth: 400, marginInline: 'auto', marginTop: 60 }}>
+            <Drift from={40} to={-40} style={{ position: 'relative' }}>
+            <div style={{ position: 'relative', width: '82%' }}>
+              <PolaroidPhoto src="/images/kate.webp" alt="Kate Mezger" rotate={-3} />
+            </div>
+            <div style={{ position: 'absolute', top: 150, right: -16, width: '48%' }}>
+              <PolaroidPhoto src="/images/projects-gallery/Cognizant-Winners.webp" alt="Kate Mezger at the Cognizant × Aston Martin Ideathon" rotate={4} zoom={1.8} focus="44% 28%" />
+            </div>
+            </Drift>
           </div>
         </div>
       </section>
 
-      {/* ── TOOLKIT ─────────────────────── */}
-      <section className="toolkit-wrap">
-        <p className="sec-eyebrow">Tools & Skills</p>
-        <div className="sec-heading">
-          <span className="h1"><RevealText text="The" /></span>
-          <span className="h2"><RevealText text="Toolkit" /></span>
-        </div>
-        <div className="skill-pills">
-          {SKILLS.map(s => <span key={s} className="skill-pill">{s}</span>)}
-        </div>
-        <div className="tool-grid" ref={toolRef}>
-          {Object.entries(TOOLS).map(([cat, items], i) => (
-            <div key={cat} className={`rv${toolOn ? ' on' : ''} d${i + 1}`}>
-              <div className="tool-label">{cat}</div>
-              <ul className="tool-list">
-                {items.map(t => <li key={t} className="tool-item"><span className="tool-dot" />{t}</li>)}
-              </ul>
-            </div>
-          ))}
-        </div>
+      {/* ── TOOLKIT — plain text, folded down to a light closing note ── */}
+      <section className={`toolkit-wrap rv${toolOn ? ' on' : ''}`} ref={toolRef}>
+        <p className="more-work-label">Toolkit</p>
+        {Object.entries(TOOLS).map(([cat, items]) => (
+          <p key={cat} className="toolkit-line" style={{ transitionDelay: `${Object.keys(TOOLS).indexOf(cat) * 90}ms` }}><b>{cat}:</b> {items.join(', ')}</p>
+        ))}
+        <p className="toolkit-line" style={{ transitionDelay: `${Object.keys(TOOLS).length * 90}ms` }}><b>Also:</b> {SKILLS.join(', ')}</p>
       </section>
 
       {/* ── FOOTER ──────────────────────── */}
       <footer className="footer">
         <span className="footer-logo">Eden<em>.</em></span>
         <div className="footer-links">
-          <button className="footer-lnk" onClick={() => scrollTo('disc-section')}>Work</button>
+          <button className="footer-lnk" onClick={() => scrollTo('work-section')}>Work</button>
           <a href="mailto:kate.mezger22@gmail.com" className="footer-lnk">Email</a>
           <a href="https://www.linkedin.com/in/kate-mezger-437397263/" target="_blank" rel="noopener noreferrer" className="footer-lnk">LinkedIn</a>
           <a href="https://github.com/katemezger" target="_blank" rel="noopener noreferrer" className="footer-lnk">GitHub</a>
@@ -810,6 +610,7 @@ export default function Home() {
         </div>
         <span className="footer-copy">© 2026 Kate Mezger</span>
       </footer>
-    </motion.div>
+    </motion.main>
+    </ScrollContainerContext.Provider>
   )
 }

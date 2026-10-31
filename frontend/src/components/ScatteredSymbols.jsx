@@ -1,3 +1,5 @@
+import Doodle from './Doodles.jsx'
+
 const SYMBOLS_DATA = [
   // Far left
   { s: '✦', x: '1%',  y: 90,   sz: 18, op: 0.22, d: 0    },
@@ -9,9 +11,9 @@ const SYMBOLS_DATA = [
   { s: '✦', x: '1%',  y: 1030, sz: 16, op: 0.22, d: 1.2  },
   { s: '◇', x: '3%',  y: 1190, sz: 19, op: 0.18, d: 0.6  },
   { s: '☽', x: '2%',  y: 1350, sz: 21, op: 0.17, d: 2.0  },
-  { s: '✿', x: '4%',  y: 1510, sz: 22, op: 0.19, d: 0.9  },
+  { doodle: 'daisy', x: '4%',  y: 1510, sz: 22, op: 0.19, d: 0.9  },
   { s: '✧', x: '1%',  y: 1670, sz: 15, op: 0.20, d: 0.5  },
-  { s: '♥', x: '3%',  y: 1830, sz: 17, op: 0.18, d: 1.4  },
+  { doodle: 'heart', x: '3%',  y: 1830, sz: 17, op: 0.18, d: 1.4  },
   { s: '✦', x: '2%',  y: 1990, sz: 22, op: 0.21, d: 0.2  },
   { s: '◈', x: '4%',  y: 2150, sz: 17, op: 0.19, d: 1.6  },
   { s: '✩', x: '1%',  y: 2310, sz: 18, op: 0.20, d: 0.3  },
@@ -79,15 +81,18 @@ export default function ScatteredSymbols() {
       pointerEvents: 'none', zIndex: 0,
     }}>
       <style>{ANIM}</style>
-      {SYMBOLS_DATA.map((sym, i) => (
-        <span key={i} style={{
+      {SYMBOLS_DATA.map((sym, i) => {
+        const wrapStyle = {
           position: 'absolute', left: sym.x, top: sym.y,
-          fontSize: sym.sz, opacity: sym.op, color: '#071A12',
+          opacity: sym.op, color: 'var(--ink)',
           userSelect: 'none', lineHeight: 1, display: 'block',
           animation: `symFloat ${3.5 + (i % 6) * 0.8}s ease-in-out infinite alternate`,
           animationDelay: `${sym.d}s`,
-        }}>{sym.s}</span>
-      ))}
+        }
+        return sym.doodle
+          ? <span key={i} style={wrapStyle}><Doodle name={sym.doodle} color="var(--ink)" size={sym.sz} /></span>
+          : <span key={i} style={{ ...wrapStyle, fontSize: sym.sz }}>{sym.s}</span>
+      })}
     </div>
   )
 }
@@ -114,10 +119,10 @@ const FIXED_SYMBOLS = [
   { s:'❋', x:'91%', y:'92%', sz:20, op:0.19, d:0.1  },
   { s:'✧', x:'9%',  y:'14%', sz:13, op:0.16, d:0.9  },
   { s:'✦', x:'11%', y:'46%', sz:14, op:0.15, d:0.3  },
-  { s:'☽', x:'8%',  y:'78%', sz:14, op:0.16, d:0.6  },
+  { doodle: 'moon', x:'8%',  y:'78%', sz:14, op:0.16, d:0.6  },
   { s:'◈', x:'86%', y:'16%', sz:13, op:0.16, d:1.6  },
   { s:'✧', x:'84%', y:'48%', sz:12, op:0.15, d:1.8  },
-  { s:'✩', x:'87%', y:'80%', sz:15, op:0.16, d:1.3  },
+  { doodle: 'starburst', x:'87%', y:'80%', sz:15, op:0.16, d:1.3  },
 ]
 
 export function ScatteredSymbolsFixed() {
@@ -128,15 +133,18 @@ export function ScatteredSymbolsFixed() {
       overflow: 'hidden',
     }}>
       <style>{ANIM}</style>
-      {FIXED_SYMBOLS.map((sym, i) => (
-        <span key={i} style={{
+      {FIXED_SYMBOLS.map((sym, i) => {
+        const wrapStyle = {
           position: 'absolute', left: sym.x, top: sym.y,
-          fontSize: sym.sz, opacity: sym.op, color: '#071A12',
+          opacity: sym.op, color: 'var(--ink)',
           userSelect: 'none', lineHeight: 1, display: 'block',
           animation: `symFloat ${3.5 + (i % 6) * 0.8}s ease-in-out infinite alternate`,
           animationDelay: `${sym.d}s`,
-        }}>{sym.s}</span>
-      ))}
+        }
+        return sym.doodle
+          ? <span key={i} style={wrapStyle}><Doodle name={sym.doodle} color="var(--ink)" size={sym.sz} /></span>
+          : <span key={i} style={{ ...wrapStyle, fontSize: sym.sz }}>{sym.s}</span>
+      })}
     </div>
   )
 }
