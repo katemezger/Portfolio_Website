@@ -30,6 +30,8 @@ import useDocumentTitle from '../components/useDocumentTitle.js'
 //    - outcomes[]   → array of { stat, label } result metrics
 //    - reflection   → what you learned / what you'd do differently
 //    - heroImage    → path to a wide banner image, e.g. /images/projects/<slug>-hero.webp
+//    - heroFit      → optional 'contain' for logos, so the hero shows the whole
+//                     image on white instead of cropping it to fill
 //    - images[]     → Gallery section at the bottom of the page. Each entry is
 //                     either a path string, or { src, caption } for a captioned
 //                     image. Screenshots, code snippets, graphs, whatever fits.
@@ -444,55 +446,99 @@ The aesthetic direction is "whimsical botanical garden": warm parchment backgrou
   // ── AIS MEMBERSHIP PORTAL ──────────────────────────────────────────────────
   'ais-portal': {
     title:    'AIS Membership Portal',
-    subtitle: 'Designing the mobile experience for a student org\'s membership platform.',
-    year:     'Jun 2026',
+    subtitle: 'Designing and building the platform 800+ AI Society members use to apply, RSVP and check in.',
+    year:     '2026',
     category: 'Design & Development',
     accent:   'var(--ink)',
     motif:    'chip',
-    tags:     ['Figma', 'Next.js', 'TypeScript', 'Mobile Design', 'Brand Guidelines'],
-    role:     'Lead Designer & Developer',
-    team:     'AIS tech team (2 designers; I built ~90% of what shipped)',
-    duration: '~1 month',
-    tools:    ['Figma', 'Next.js', 'TypeScript'],
+    tags:     ['Figma', 'Design Systems', 'Mobile Design', 'Next.js', 'TypeScript', 'Tailwind CSS'],
+    role:     'Lead Designer & Mobile Frontend Developer',
+    team:     'AIS tech team: 2 designers (I designed ~90% of the screens) and the engineering team',
+    duration: 'Jun 20 – Aug 28, 2026 to launch; ongoing since',
+    tools:    ['Figma', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
     githubUrl: 'https://github.com/katemezger/portal',
     heroImage: '/images/ais_logo_black.png',
+    heroFit:   'contain',   // a logo, not a photo: show it whole on white instead of cropping
     images: [
       { src: '/images/projects-gallery/AISPortal-dashboard.webp', caption: 'The member dashboard: announcements, RSVPs, and personalized event recommendations' },
       { src: '/images/projects-gallery/AISPortal-apply.webp', caption: 'The program selection flow: AI Academy, AI Mentorship, and Officer applications' },
       { src: '/images/projects-gallery/AISPortal-events.webp', caption: 'Browsing events with tag-based filtering and RSVP status' },
       { src: '/images/projects-gallery/AISPortal-onboarding.png', caption: 'New member onboarding: the profile completion flow' },
     ],
-    overview: `The AIS Membership Portal is the platform AI Society at UT Dallas uses to run its membership: applications for programs like AI Academy, AIM, and Innovation Labs, event RSVPs, and QR-code check-ins. As the tech team's design specialist, I designed and built roughly 90% of the portal's pages and components from scratch in Figma, then integrated the mobile-responsive views directly into the live Next.js codebase myself.`,
-    problem:  `AIS needed a portal that could hold up to real membership traffic while staying visually consistent with the organization's current brand guidelines, and it needed to work well on mobile since that's how most students would RSVP to events and check in. All of this had to come together on a tight, roughly one-month timeline, with almost no existing component library to lean on.`,
+    glance: {
+      problem: 'AI Society needed one place for 800+ members to apply to programs, RSVP and check in, on desktop and on their phones, plus tools for officers to run it all.',
+      did:     'Designed ~90% of the desktop and mobile screens in Figma, then built the mobile frontend (22 of its 28 components) in the team\u2019s Next.js codebase.',
+      result:  'Launched 28 August, ten weeks after the first frame. Now 807 members, 218 of them active this semester.',
+    },
+    overview: `The AIS Membership Portal is where the Artificial Intelligence Society at UT Dallas runs its membership: students apply to programs like AI Academy, AI Mentorship and AI Innovation Labs, RSVP to events and check in with a QR code, while officers review applications, run events and manage members. I was the tech team's lead designer. I designed about 90% of the portal's desktop and mobile screens in Figma, built its component library, and then built the mobile frontend myself in the team's Next.js and TypeScript codebase. The engineering team built the backend and the desktop app.`,
+    problem:  `The portal had to serve two very different people. Members needed to apply, find events and check in quickly, often from a phone at the event itself. Officers needed to review applications, run check-ins and manage hundreds of members. All of it had to match AI Society's brand, and the whole thing, from first Figma frame to a working backend, had to launch before the fall semester.`,
     process: [
       {
-        heading: 'Design Direction & Guidelines',
-        phase: 'UI & Design System',
-        body: `Worked from AIS's current brand guidelines so every page felt consistent with the organization's existing identity rather than introducing a one-off visual language. From there I designed the large majority of the portal's pages and components myself in Figma, largely from a blank canvas rather than an existing design system, syncing periodically with the other designer on the team to keep the overall system coherent.`,
-        image: '/images/projects-gallery/AISPortal-dashboard.webp',
+        heading: 'Two Audiences, One Portal',
+        phase: 'Research & Discovery',
+        body: `Before designing anything, I mapped every screen each audience needed. Members: onboarding, a dashboard, events and event details, applying to a program through a three-step form, and their profile. Officers: an overview, applicant review with a scoring rubric, event management with QR check-in, and a members list. Designing both sides in one system meant a member's RSVP and an officer's check-in count were two views of the same data, so they had to look and behave consistently.`,
       },
       {
-        heading: 'Mobile Page Integration',
-        phase: 'Build & Development',
-        body: `Once designs were approved, I integrated the mobile-responsive pages directly into the portal's Next.js and TypeScript codebase myself, making sure layouts, navigation, and interactive elements like the QR check-in flow held up cleanly on smaller screens.`,
+        heading: 'Wireframes, Desktop and Mobile Together',
+        phase: 'Wireframes & Prototypes',
+        body: `I started in Figma on 20 June and designed every screen in both sizes side by side, instead of finishing desktop and squeezing it down later. The application form became a three-step wizard: personal details, long answers, then a review screen before submitting.`,
         images: [
-          '/images/projects-gallery/AISPortal-apply.webp',
-          '/images/projects-gallery/AISPortal-events.webp',
-          '/images/projects-gallery/AISPortal-onboarding.png',
+          '/images/projects-gallery/aisportal-figma-onboarding-dashboard.webp',
+          '/images/projects-gallery/aisportal-figma-apply-wizard.webp',
         ],
       },
       {
-        heading: 'Tight Turnaround',
+        heading: 'A Component Library First',
+        phase: 'UI & Design System',
+        body: `To keep two designers and dozens of screens consistent, I built a component library: the AIS colours (cream, brand blue, peach, lavender), two type families (Placard Next for titles, Garet for body and UI), buttons, a pastel set of event tags, inputs, stat cards, the member nav and the admin sidebar. I also designed the empty and error states up front: no RSVPs yet, no applications, no search results, form errors and a failed load.`,
+        images: [
+          '/images/projects-gallery/aisportal-figma-components.webp',
+          '/images/projects-gallery/aisportal-figma-events-admin-errors.webp',
+        ],
+        callout: { label: 'Decision', text: 'Design the empty and error states with everything else, not after launch. A brand-new member sees "No RSVPs yet" before anything else.' },
+      },
+      {
+        heading: 'Review, Then Revise',
+        phase: 'Iteration',
+        body: `Every screen went through three passes: a wireframe, a high-fidelity pass in the AIS brand, then the build. After a tech team review, I turned the meeting notes into specific changes. On Apply, the "How to Begin" steps came out, program cards got "Learn more" buttons and the slogan banner started moving. On Profile, the photo placeholder went and the name and major moved into a top bar. The onboarding setup page got a gradient background.`,
+        images: ['/images/projects-gallery/aisportal-evolution.webp'],
+        callout: { label: 'Cut', text: 'The three-step "How to Begin" block on Apply. It made it through the wireframe and hi-fi passes, then came out in review.' },
+      },
+      {
+        heading: 'Building the Mobile Frontend',
         phase: 'Build & Development',
-        body: `The full design-to-integration cycle ran on roughly a one-month deadline. Figuring out which pages needed original design thinking versus which could lean on already-established patterns is what made the timeline workable, especially while carrying most of the page count myself.`,
+        body: `The engineering team built the backend and desktop app, and I built the mobile side in the same codebase: 22 of the 28 mobile components, covering every member and admin screen. Admin screens went from desktop's sidebar and wide tables to stacked cards under a shared top nav. Then I audited every mobile page against its desktop version and closed each gap, from applications that only showed open listings to an admin view that dropped applicants' emails. Along the way I found that the site's main font, Inter, was referenced everywhere but never actually loaded, and fixed it for every page.`,
+        images: ['/images/projects-gallery/aisportal-parity-audit.webp'],
+        callout: { label: 'Decision', text: 'Mobile gets every feature desktop has, and nothing desktop doesn\u2019t. No second-class phone version.' },
+      },
+      {
+        heading: 'Motion and Colour Pass',
+        phase: 'UI Polish',
+        body: `Just before launch I added motion and a targeted colour pass. The active nav item became a gradient pill that slides between links instead of snapping, every page change got a soft fade and slide, dashboard cards got a colour strip per category, and event cards lift on hover instead of just changing text colour. I also removed an Email Notifications toggle that didn't do anything.`,
+        image: '/images/projects-gallery/aisportal-live-events.webp',
+      },
+      {
+        heading: 'Growing the Platform',
+        phase: 'Expansion',
+        body: `After launch, the portal kept growing. In September and October I designed and built the AI Academy learning pages, with featured workshops, a course sequence and resources, and the AI Mentorship hub, with a weekly check-in QR and a timeline of where each team is.`,
+        images: [
+          '/images/projects-gallery/aisportal-figma-academy-aim.webp',
+          '/images/projects-gallery/aisportal-live-academy.webp',
+        ],
+      },
+      {
+        heading: 'In Use',
+        phase: 'Testing & Results',
+        body: `The portal launched on 28 August, ten weeks after the first Figma frame. As of October it holds 807 members, 218 of them active this semester and 31 new this month, with 54 officers.`,
+        image: '/images/projects-gallery/aisportal-live-member-stats.webp',
       },
     ],
     outcomes: [
-      { stat: '~90%', label: "Of the portal's shipped pages/components designed and built by me" },
-      { stat: 'Mobile', label: 'Pages designed and integrated' },
-      { stat: '~1 mo', label: 'Design-to-integration turnaround' },
+      { stat: '807', label: 'Members on the portal' },
+      { stat: '218', label: 'Active this semester' },
+      { stat: '10 wks', label: 'From first Figma frame to launch' },
     ],
-    reflection: `This was my first time taking a design all the way through to integrating it into a real, already-established codebase instead of handing off a Figma file and being done. Carrying most of the page count myself on a one-month timeline meant constantly triaging which pages needed original design thinking versus which could reuse already-established patterns — a skill I didn't have to exercise nearly as much on smaller solo projects.`,
+    reflection: `This was my first product with two audiences in one system, and designing the member and officer sides together is what kept them consistent. The parity audit taught me that a responsive page isn't the same as a complete one: several gaps came from mobile screens I built before the backend was merged, which still pointed at placeholder data. What I'd do differently: check each mobile screen against desktop as soon as it's built, instead of in one audit at the end.`,
   },
 
   // ── CLOVERLEAF CMS — CLIENT INTAKE REDESIGN ─────────────────────────────────
@@ -762,7 +808,7 @@ export default function ProjectPage() {
            read as boring/empty rather than calm. */
         .pp-wide  { max-width: 1680px; margin: 0 auto; padding: 0 4vw; }
         .pp-body  { max-width: 1240px; margin: 0 auto; padding: 0 4vw 72px; }
-        .pp-hero  { width: 100%; aspect-ratio: 16/7; object-fit: cover; display: block; border-radius: 6px; margin-top: 24px; }
+        .pp-hero  { width: 100%; aspect-ratio: 16/7; object-fit: cover; display: block; border-radius: 6px; margin-top: 24px; background: #fff; }
         .pp-hero-frame { overflow: hidden; border-radius: 6px; margin-top: 24px; }
         .pp-hero-frame .pp-hero { margin-top: 0; border-radius: 0; }
         .pp-meta  { display: grid; grid-template-columns: repeat(4, auto); gap: 18px 40px; margin: 24px 0 0; }
@@ -926,7 +972,7 @@ export default function ProjectPage() {
           text column that follows. */}
       <div className="pp-wide">
         {project.heroImage
-          ? <div className="pp-hero-frame"><Drift from={-28} to={28} style={{ scale: 1.08 }}><img className="pp-hero" src={project.heroImage} alt={project.title} /></Drift></div>
+          ? <div className="pp-hero-frame"><Drift from={-28} to={28} style={{ scale: 1.08 }}><img className="pp-hero" src={project.heroImage} alt={project.title} style={project.heroFit ? { objectFit: project.heroFit, padding: '4% 8%' } : undefined} /></Drift></div>
           : <div className="pp-hero-placeholder">{project.heroNote || 'Add Image'}</div>
         }
       </div>
