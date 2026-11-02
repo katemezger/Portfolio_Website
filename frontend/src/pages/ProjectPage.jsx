@@ -706,9 +706,9 @@ The aesthetic direction is "whimsical botanical garden": warm parchment backgrou
 // Matches the homepage's display order, so "Next Project" cycles the same
 // way a visitor would naturally browse from the project grid.
 const PROJECT_ORDER = [
-  'tracksense-ai', 'ais-portal', 'cloverleaf-intake-redesign', 'eden-portfolio', 'cgs-usability-study',
-  'time2invest', 'netflix-prediction', 'divinity-sales-prediction', 'steam-customer-segmentation',
-  'halo-ideathon',
+  'tracksense-ai', 'ais-portal', 'cloverleaf-intake-redesign', 'cgs-usability-study',
+  'steam-customer-segmentation', 'halo-ideathon', 'time2invest', 'netflix-prediction',
+  'divinity-sales-prediction', 'eden-portfolio',
 ]
 
 /* ─── colour tokens ──────────────────────────────────────────────────────── */

@@ -44,7 +44,7 @@ const PROJECTS = [
     title: 'TrackSense AI',
     cats:  ['Design & Development', 'AI/ML & Data Science'],
     year:  '2026',
-    desc:  'Frontend design and development for an AI-powered Formula 1 race analytics platform, presented at AIM S26.',
+    desc:  'UI/UX and frontend lead for an F1 analytics platform. Designed every page in Figma, built it in React, and won 1st of 14 teams at AIM Night.',
     tags:  ['React', 'UI Design', 'Formula 1', 'Data Visualisation'],
     img:   '/images/projects/tracksense-ai-hero.webp',
   },
@@ -53,10 +53,11 @@ const PROJECTS = [
     slug:  'ais-portal',
     title: 'AIS Membership Portal',
     cats:  ['Design & Development'],
-    year:  'Jun 2026',
+    year:  '2026',
     desc:  'Lead designer for the platform 800+ AI Society members use to apply, RSVP and check in. Designed ~90% of the screens and built the mobile frontend.',
     tags:  ['Figma', 'Next.js', 'TypeScript', 'Mobile Design'],
     img:   '/images/ais_logo_black.png',
+    imgFit: 'contain',
   },
   {
     id: 3,
@@ -87,6 +88,7 @@ const PROJECTS = [
     desc:  'The team\'s first usability-focused member, redesigning intake and counseling screens for a platform people often use late at night.',
     tags:  ['UX Design', 'Figma', 'Design Standards'],
     img:   '/images/projects/cloverleaf-logo.png',
+    imgFit: 'contain',
   },
   {
     id: 6,
@@ -143,10 +145,10 @@ const PROJECTS = [
 // Hand-picked, in display order — the 3 flagships (see memory) plus 3 more
 // range-showing pieces (UX research, data/AI, a hackathon build). No filter
 // tabs: references consistently show a small, curated "featured work" set
-// rather than a filterable grid. 6 total = 2 rows of 3 in the grid below.
+// rather than a filterable grid. These 4 flagships are the deep case studies;
+// everything else drops to the compact "More Work" row.
 const FEATURED_SLUGS = [
-  'tracksense-ai', 'ais-portal', 'cloverleaf-intake-redesign',
-  'steam-customer-segmentation', 'cgs-usability-study', 'halo-ideathon',
+  'tracksense-ai', 'ais-portal', 'cloverleaf-intake-redesign', 'cgs-usability-study',
 ]
 
 const TOOLS = {
@@ -331,10 +333,9 @@ export default function Home() {
         }
 
         /* Featured — responsive card grid */
-        /* Fixed 3 columns (6 featured projects = 2 rows of 3), not auto-fit —
-           guarantees the row count regardless of viewport width. */
-        .proj-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
-        @media (max-width: 980px) { .proj-grid { grid-template-columns: repeat(2, 1fr); } }
+        /* Fixed 2 columns (4 flagships = 2 rows of 2), so the featured cards
+           stay large at any desktop width. */
+        .proj-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
         @media (max-width: 600px) { .proj-grid { grid-template-columns: 1fr; } }
         .proj-card { cursor: pointer; display: flex; flex-direction: column; }
         .proj-card-img {
@@ -348,11 +349,13 @@ export default function Home() {
            on the dark page. Set on the img, not the frame, so cards with no
            image keep their placeholder label readable. */
         .proj-card-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #fff; }
+        /* Logos show whole instead of being cropped to fill the card. */
+        .proj-card-img img.logo { object-fit: contain; padding: 10% 12%; }
         .more-work-thumb img { background: #fff; }
         .proj-img-label { font-family: 'Quicksand', sans-serif; font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(var(--ink-rgb),0.56); }
         .proj-card-cats { position: absolute; top: 10px; left: 10px; right: 48px; display: flex; flex-wrap: wrap; gap: 4px; }
         .proj-card-cat { font-family: 'Quicksand', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: #E8E1D6; padding: 4px 10px; border-radius: 3px; }
-        .proj-card-yr  { position: absolute; top: 10px; right: 10px; font-family: 'Quicksand', sans-serif; font-size: 11px; color: rgba(232,225,214,0.75); text-shadow: 0 1px 4px rgba(0,0,0,0.35); }
+        .proj-card-yr  { position: absolute; top: 10px; right: 10px; font-family: 'Quicksand', sans-serif; font-size: 11px; color: #E8E1D6; background: rgba(20,18,16,0.72); padding: 3px 8px; border-radius: 3px; }
         .proj-card-eyebrow { display: flex; align-items: center; gap: 6px; font-family: 'Quicksand', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
         .proj-title { font-family: 'Stoke', serif; font-weight: 400; font-size: 21px; color: var(--ink); line-height: 1.2; transition: color 0.2s; margin-bottom: 6px; }
         .proj-card:hover .proj-title { color: var(--terra); }
@@ -381,7 +384,7 @@ export default function Home() {
         }
         .more-work-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
         .more-work-info { min-width: 0; }
-        .more-work-title { font-family: 'Stoke', serif; font-size: 15px; color: var(--ink); transition: color 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .more-work-title { font-family: 'Stoke', serif; font-size: 15px; color: var(--ink); transition: color 0.2s; line-height: 1.25; }
         .more-work-item:hover .more-work-title { color: var(--terra); }
         .more-work-meta { font-family: 'Quicksand', sans-serif; font-size: 12px; color: rgba(var(--ink-rgb),0.58); margin-top: 2px; }
 
@@ -497,13 +500,13 @@ export default function Home() {
             : featuredProjects.map((p, i) => (
               <div
                 key={p.id}
-                className={`proj-card rv${projOn ? ' on' : ''} d${Math.min(i + 1, 4)}${i % 3 === 0 ? ' from-left' : i % 3 === 2 ? ' from-right' : ''}`}
+                className={`proj-card rv${projOn ? ' on' : ''} d${Math.min(i + 1, 4)}${i % 2 === 0 ? ' from-left' : ' from-right'}`}
                 onClick={() => navigate(`/project/${p.slug}`)}
                 role="button" tabIndex={0}
                 onKeyDown={e => e.key === 'Enter' && navigate(`/project/${p.slug}`)}>
                 <div className="proj-card-img">
                   {p.img
-                    ? <img src={p.img} alt={p.title} />
+                    ? <img src={p.img} alt={p.title} className={p.imgFit === 'contain' ? 'logo' : undefined} />
                     : <span className="proj-img-label">{p.imgNote || 'Add Image'}</span>
                   }
                   <div className="proj-card-cats">
