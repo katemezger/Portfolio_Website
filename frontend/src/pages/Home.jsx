@@ -81,11 +81,11 @@ const PROJECTS = [
   {
     id: 5,
     slug:  'cloverleaf-intake-redesign',
-    title: 'Cloverleaf CMS: Client Intake Redesign',
+    title: 'Cloverleaf CMS: Redesigning Intake and Counseling',
     cats:  ['Design & Development'],
     year:  'Aug 2026 – Present',
-    desc:  'Redesigned the color scheme, typography, and UI standards for the client intake flow inside a live compliance-sensitive case management platform.',
-    tags:  ['Design Systems', 'Typography', 'UI Standards'],
+    desc:  'The team\'s first usability-focused member, redesigning intake and counseling screens for a platform people often use late at night.',
+    tags:  ['UX Design', 'Figma', 'Design Standards'],
     img:   '/images/projects/cloverleaf-logo.png',
   },
   {
@@ -565,7 +565,7 @@ export default function Home() {
             </div>
             <p className="about-bio">
               I'm Kate, a multi-disciplinary designer and developer. I've always been drawn to the edges where disciplines overlap: the moment a game's design breaks down into a piece of UX beauty, or a data visualisation becomes a piece of art.<br /><br />
-              I'm a Cognitive Science major at UT Dallas, concentrating in AI/Computation and HCI, and I'm working through a data science certification alongside it. Right now I'm an Application Developer Intern at Cooperative Processing Resources, shipping frontend features for Cloverleaf CMS, and I'm the Technology Designer and Officer for the Artificial Intelligence Society, leading web development and product design across the org's platforms.<br /><br />
+              I'm a Cognitive Science major at UT Dallas, concentrating in AI/Computation and HCI, and I'm working through a data science certification alongside it. Right now I'm an Application Developer Intern at Cooperative Processing Resources, building frontend features and redesigning screens for Cloverleaf CMS, and I'm the Technology Designer and Officer for the Artificial Intelligence Society, leading web development and product design across the org's platforms.<br /><br />
               Before that, I did UX research with the Nebula Labs product team, co-moderating focus groups and user interviews across three student platforms, and spent over a year as a Game Master at Red Door Escape Room.
             </p>
             <div className="about-links">
